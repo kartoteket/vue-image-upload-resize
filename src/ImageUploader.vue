@@ -3,13 +3,13 @@
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
  *
  * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader).
- * Adapted for Vue by Svale Fossåskaret / Kartoteket with some adaptions.
+ * Adapted for Vue by Svale Fossåskaret / Kartoteket with some modifications.
  *
- * Requires exif.js (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
+ * Requires exif.js 2.1.1 (2.2.0 is broken) (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
  *
  *
  * TODO Items:
- * 1. Remove all wrapping markup (input only), but preserve option for imagePreview and reative buttonCaption
+ * 1. Remove all wrapping markup (input only), but preserve option for imagePreview and reactive buttonCaption
  * 1. Progress Report
  * 2. Multiple Files
  * 3. Suport custom completion callback
@@ -207,7 +207,7 @@ export default {
 
       var that = this
       var img = document.createElement('img')
-      var reader = new FileReader()
+      var reader = new window.FileReader()
 
       reader.onload = function (e) {
         if (that.debug > 1) {

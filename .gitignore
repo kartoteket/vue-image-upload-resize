@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+npm-debug.log
+test/coverage
+yarn-error.log
+reports
+/svales-notes.md
