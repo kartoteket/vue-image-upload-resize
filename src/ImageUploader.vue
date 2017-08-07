@@ -236,7 +236,9 @@ export default {
               that.scaleImage(img, completionCallback)
             }
           } else {
-            console.log('No autoRotate')
+            if (that.debug) {
+              console.log('No autoRotate')
+            }
             that.scaleImage(img, completionCallback)
           }
         }
