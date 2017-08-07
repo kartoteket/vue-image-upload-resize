@@ -1,3 +1,18 @@
+<template>
+  <div>
+    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100">
+    <input id="fileInput" class="fileinput" type="file" :class="{ 'fileinput--small' : imagePreview }" @change="uploadFile" accept="image/*" capture="camera">
+    <label for="fileInput">
+      <figure>
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <path class="path1" d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"></path>
+        </svg>
+      </figure>
+      <span class="upload-caption">{{fileInputButtonCaption}}</span>
+    </label>
+  </div>
+</template>
+
 <script>
 /**
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
@@ -33,24 +48,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 **/
-</script>
-
-<template>
-  <div class="group" style="text-align: center;">
-    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100">
-    <input id="fileInput" class="fileinput" type="file" :class="{ 'fileinput--small' : imagePreview }" @change="uploadFile" accept="image/*" capture="camera">
-    <label for="fileInput">
-      <figure>
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-            <path class="path1" d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"></path>
-        </svg>
-      </figure>
-      <span class="upload-caption">{{fileInputButtonCaption}}</span>
-    </label>
-  </div>
-</template>
-
-<script>
 import EXIF from 'exif-js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
