@@ -932,7 +932,41 @@ var canvasToBlob = createCommonjsModule(function (module) {
 }(window));
 });
 
-var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"group",staticStyle:{"text-align":"center"}},[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{staticClass:"fileinput",class:{ 'fileinput--small' : _vm.imagePreview },attrs:{"id":"fileInput","type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_c('label',{attrs:{"for":"fileInput"}},[_c('figure',[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","width":"32","height":"32","viewBox":"0 0 32 32"}},[_c('path',{staticClass:"path1",attrs:{"d":"M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"}})])]),_c('span',{staticClass:"upload-caption"},[_vm._v(_vm._s(_vm.fileInputButtonCaption))])])])},staticRenderFns: [],
+/**
+ * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
+ *
+ * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader).
+ * Adapted for Vue by Svale Fossåskaret / Kartoteket with some modifications.
+ *
+ * Requires exif.js 2.1.1 (2.2.0 is broken) (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
+ *
+ *
+ * TODO Items:
+ * 1. Remove all wrapping markup (input only), but preserve option for imagePreview and reactive buttonCaption
+ * 1. Progress Report
+ * 2. Multiple Files
+ * 3. Suport custom completion callback
+ *
+ *
+ * LICENSE (from original ImageUploader files by Ross Turner):
+ *
+ * Copyright (c) 2012 Ross Turner and contributors (https://github.com/zsinj)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+**/
+var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{staticClass:"fileinput",class:{ 'fileinput--small' : _vm.imagePreview },attrs:{"id":"fileInput","type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_c('label',{attrs:{"for":"fileInput"}},[_c('figure',[_c('svg',{attrs:{"xmlns":"http://www.w3.org/2000/svg","width":"32","height":"32","viewBox":"0 0 32 32"}},[_c('path',{staticClass:"path1",attrs:{"d":"M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"}})])]),_c('span',{staticClass:"upload-caption"},[_vm._v(_vm._s(_vm.fileInputButtonCaption))])])])},staticRenderFns: [],
   name: 'image-uploader',
 
   props: {
