@@ -40,7 +40,7 @@
   "pre-commit": "lint:staged",
   "dependencies": {
     "blueimp-canvas-to-blob": "^3.7.0",
-    "exif-js": "file:../exif-js",
+    "exif-js": "file:../exif-js"
   },
   "peerDependencies": {
     "vue": "^2.3.0"
