@@ -317,8 +317,11 @@ export default {
       var ratio = canvas.width / canvas.height
       var mWidth = Math.min(this.maxWidth, ratio * this.maxHeight)
 
-      if ((this.maxSize > 0) && (this.maxSize < canvas.width * canvas.height / 1000)) {
-        mWidth = Math.min(mWidth, Math.floor(Math.sqrt(this.maxSize * ratio)))
+      // suggested re-write by https://github.com/ryancramerdesign
+      // https://github.com/rossturner/HTML5-ImageUploader/issues/13
+      if (this.maxSize > 0 && (this.maxSize < (canvas.width * canvas.height) / 1000000)) {
+        var mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000)
+        mWidth = mWidth > 0 ? Math.min(mWidth, mSize) : mSize
       }
 
       if (this.scaleRatio) {
@@ -343,7 +346,10 @@ export default {
         canvas = this.scaleCanvasWithAlgorithm(canvas, mWidth)
       }
 
-      var imageData = canvas.toDataURL('image/jpeg', this.quality)
+      // suggested re-write by https://github.com/ryancramerdesign
+      // https://github.com/rossturner/HTML5-ImageUploader/issues/13
+      var quality = this.currentFile.type === 'image/jpeg' ? this.quality : 1.0
+      var imageData = canvas.toDataURL(this.currentFile.type, quality)
       if (typeof this.onScale === 'function') {
         this.onScale(imageData)
       }
