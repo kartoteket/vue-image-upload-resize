@@ -27,7 +27,7 @@
  * 1. Remove all wrapping markup (input only), but preserve option for imagePreview and reactive buttonCaption
  * 1. Progress Report
  * 2. Multiple Files
- * 3. Suport custom completion callback
+ * 3. Support custom completion callback
  *
  *
  * LICENSE (from original ImageUploader files by Ross Turner):
@@ -246,7 +246,7 @@ export default {
     },
 
     /**
-     * Performance orientation and scalin logic
+     * Performance orientation and scaling logic
      * @param  {[type]} img                [description]
      * @param  {[type]} completionCallback [description]
      * @param  {[type]} orientation        [description]
