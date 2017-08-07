@@ -37,7 +37,7 @@
       "stylelint"
     ]
   },
-  "pre-commit": "lint:staged",
+  "#pre-commit": "lint:staged",
   "dependencies": {
     "blueimp-canvas-to-blob": "^3.7.0",
     "exif-js": "file:../exif-js"
