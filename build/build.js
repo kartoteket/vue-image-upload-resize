@@ -38,13 +38,16 @@ function rollupBundle ({ env }) {
             Promise.all(
               stylesNodes.map(processStyle)
             ).then(css => {
-              const result = css.map(c => c.css).join('')
-              // write the css for every component
-              // TODO add it back if we extract all components to individual js
-              // files too
-              // css.forEach(writeCss)
-              write(`dist/${name}.css`, result)
-              write(`dist/${name}.min.css`, new CleanCSS().minify(result).styles)
+              console.log(css.length)
+              if (css.length) {
+                const result = css.map(c => c.css).join('')
+                // write the css for every component
+                // TODO add it back if we extract all components to individual js
+                // files too
+                // css.forEach(writeCss)
+                write(`dist/${name}.css`, result)
+                write(`dist/${name}.min.css`, new CleanCSS().minify(result).styles)
+              }
             }).catch(logError)
           }
         }
