@@ -153,22 +153,22 @@ On end of upload.
 ## Optional dependencies
 If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries must be loaded to 
 
-###the global scope...
+### the global scope...
 
-####index.html
+#### index.html
 
 ```html
 <script src="js/exif.js" async defer></script>
 <script src="js/canvas-to-blob.min.js" async defer></script>
 ```
-###... or bundled
+### ... or bundled
 with the plugin in the build process
 
 ```bash
 npm install --save exif-js blueimp-canvas-to-blob
 ```
 
-####imageUploader.vue
+#### imageUploader.vue
 ```js
 /* Install locally and uncomment below to bundle dependencies from node_modules */
 import EXIF from 'exif-js'

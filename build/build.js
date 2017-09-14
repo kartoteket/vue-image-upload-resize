@@ -38,7 +38,6 @@ function rollupBundle ({ env }) {
             Promise.all(
               stylesNodes.map(processStyle)
             ).then(css => {
-              console.log(css.length)
               if (css.length) {
                 const result = css.map(c => c.css).join('')
                 // write the css for every component
