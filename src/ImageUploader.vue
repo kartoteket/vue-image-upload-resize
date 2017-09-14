@@ -1,15 +1,14 @@
 <template>
   <div>
     <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100">
-    <input id="fileInput" class="fileinput" type="file" :class="{ 'fileinput--small' : imagePreview }" @change="uploadFile" accept="image/*" capture="camera">
-    <label for="fileInput">
-      <figure>
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-            <path class="path1" d="M9.5 19c0 3.59 2.91 6.5 6.5 6.5s6.5-2.91 6.5-6.5-2.91-6.5-6.5-6.5-6.5 2.91-6.5 6.5zM30 8h-7c-0.5-2-1-4-3-4h-8c-2 0-2.5 2-3 4h-7c-1.1 0-2 0.9-2 2v18c0 1.1 0.9 2 2 2h28c1.1 0 2-0.9 2-2v-18c0-1.1-0.9-2-2-2zM16 27.875c-4.902 0-8.875-3.973-8.875-8.875s3.973-8.875 8.875-8.875c4.902 0 8.875 3.973 8.875 8.875s-3.973 8.875-8.875 8.875zM30 14h-4v-2h4v2z"></path>
-        </svg>
-      </figure>
-      <span class="upload-caption">{{fileInputButtonCaption}}</span>
-    </label>
+    <input
+      id="fileInput"
+      :class="className"
+      type="file"
+      @change="uploadFile"
+      accept="image/*"
+      capture="camera">
+      <slot name="upload-label"></slot>
   </div>
 </template>
 
@@ -20,15 +19,15 @@
  * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader).
  * Adapted for Vue by Svale Fossåskaret / Kartoteket with some modifications.
  *
- * Requires exif.js 2.1.1 (2.2.0 is broken) (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
+ * Requires exif.js 2.3.0 (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
  *
  *
  * TODO Items:
- * 1. Remove all wrapping markup (input only), but preserve option for imagePreview and reactive buttonCaption
  * 1. Progress Report
  * 2. Multiple Files
  * 3. Support custom completion callback
- *
+ * 4. Propper unit testing with https://github.com/visionmedia/supertest
+ * 5. Clean up scaffolding and project files
  *
  * LICENSE (from original ImageUploader files by Ross Turner):
  *
@@ -48,8 +47,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
 **/
-import EXIF from 'exif-js'
-import dataURLtoBlob from 'blueimp-canvas-to-blob'
+
+/* Peer dependecies */
+/* global EXIF:true, dataURLtoBlob:true */
+
+/* Install locally and uncomment below to bundle dependencies from node_modules */
+// import EXIF from 'exif-js'
+// import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
   name: 'image-uploader',
@@ -108,10 +112,20 @@ export default {
 
     /**
      * A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen.
-     * @default true
+     * @default false
      * @type {Boolean}
      */
     autoRotate: {
+      type: Boolean,
+      default: false
+    },
+
+    /**
+     * A boolean flag to toogle an img-tag displaying the uploaded image. When set to false no img-tag is displayed
+     * @default true
+     * @type {Boolean}
+     */
+    preview: {
       type: Boolean,
       default: true
     },
@@ -128,6 +142,16 @@ export default {
     },
 
     /**
+     * Sets the desired class name for the input element
+     * @default {fileinput}
+     * @type {String or Array}
+     */
+    className: {
+      type: [String, Array],
+      default: 'fileinput'
+    },
+
+    /**
      * How much to write to the console. 0 = silent. 1 = quite. 2 = loud
      * @default false
      * @type {Boolean}
@@ -136,7 +160,6 @@ export default {
       type: Number,
       default: 0
     }
-
   },
 
   data () {
@@ -145,14 +168,7 @@ export default {
     }
   },
 
-  computed: {
-    fileInputButtonCaption: function () {
-      return this.imagePreview ? 'Endre bildet…' : 'Legg til et bilde…'
-    }
-  },
-
   methods: {
-
     /**
      * Get file from input
      * @param  {object} event
@@ -219,21 +235,27 @@ export default {
 
           // Rotate image first if required
           if (that.autoRotate) {
-            if (that.debug) {
-              console.log('ImageUploader: detecting image orientation...')
-            }
-
-            if ((typeof EXIF.getData === 'function') && (typeof EXIF.getTag === 'function')) {
-              EXIF.getData(img, function () {
-                var orientation = EXIF.getTag(this, 'Orientation')
-                if (that.debug) {
-                  console.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                }
-                that.scaleImage(img, completionCallback, orientation)
-              })
-            } else {
-              console.error('ImageUploader: can\'t read EXIF data, the Exif.js library not found')
+            if (typeof EXIF === 'undefined') {
+              console.warn('Missing EXIF library! exif-js.js must be loaded to use autoRotate')
+              console.warn('Continuing without rotation')
               that.scaleImage(img, completionCallback)
+            } else {
+              if (that.debug) {
+                console.log('ImageUploader: detecting image orientation...')
+              }
+
+              if ((typeof EXIF.getData === 'function') && (typeof EXIF.getTag === 'function')) {
+                EXIF.getData(img, function () {
+                  var orientation = EXIF.getTag(this, 'Orientation')
+                  if (that.debug) {
+                    console.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
+                  }
+                  that.scaleImage(img, completionCallback, orientation)
+                })
+              } else {
+                console.error('ImageUploader: can\'t read EXIF data, the Exif.js library not found')
+                that.scaleImage(img, completionCallback)
+              }
             }
           } else {
             if (that.debug) {
@@ -360,8 +382,12 @@ export default {
         console.log('New ImageData is ready. Set Preview, emitEvent and trigger optional callback ')
       }
 
-      // Display and return the new image
-      this.imagePreview = imageData
+      // Display preview of the new image
+      if (this.preview) {
+        this.imagePreview = imageData
+      }
+
+      // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
       this.emitEvent(this.formatOutput(imageData))
 
@@ -445,16 +471,27 @@ export default {
     },
 
     /**
-     * Sets the format otf the component output
+     * Sets the format of the component output
      * @param  {string} imageData  dataUrl
      * @return {mixed}             Either simple dataUrl string or
      *                                    object with dataURl and metadata or
      *                                    blob
      */
     formatOutput (imageData) {
+      if (this.debug) {
+        console.log('ImageUploader: outputFormat: ' + this.outputFormat)
+      }
+
       if (this.outputFormat === 'blob') {
+        if (typeof dataURLtoBlob === 'undefined') {
+          console.warn('Missing library! blueimp-canvas-to-blob.js must be loaded to output as "blob"')
+          console.warn('Falling back to default base64 dataUrl')
+          return imageData
+        }
         return dataURLtoBlob(imageData)
-      } else if (this.outputFormat === 'verbose') {
+      }
+
+      if (this.outputFormat === 'verbose') {
         return {
           dataUrl: imageData,
           name: this.currentFile.name,
@@ -463,7 +500,7 @@ export default {
         }
       }
 
-      // simple base 64 dataUrl string by default
+      // simple base64 dataUrl string by default
       return imageData
     }
   },
