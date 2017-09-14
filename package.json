@@ -12,6 +12,14 @@
     "dist",
     "src"
   ],
+  "watch": {
+    "build": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "js,vue"
+    }
+  },
   "scripts": {
     "clean": "rimraf dist",
     "build": "node build/build.js",
@@ -26,7 +34,8 @@
     "futureTest": "cross-env BABEL_ENV=test karma start test/karma.conf.js --single-run",
     "dev": "webpack-dashboard -- webpack-dev-server --config build/webpack.config.dev.js --open",
     "dev:coverage": "cross-env BABEL_ENV=test karma start test/karma.conf.js",
-    "prepublishOnly": "yon run build"
+    "prepublishOnly": "yon run build",
+    "watch": "npm-watch"
   },
   "lint-staged": {
     "*.{vue,jsx,js}": [
@@ -91,6 +100,7 @@
     "mocha": "^3.3.0",
     "mocha-css": "^1.0.1",
     "postcss": "^6.0.0",
+    "npm-watch": "^0.2.0",
     "postcss-cssnext": "^2.10.0",
     "pre-commit": "^1.2.0",
     "rimraf": "^2.6.0",
