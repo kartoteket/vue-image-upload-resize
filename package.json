@@ -7,7 +7,14 @@
   "module": "dist/vue-image-upload-resize.esm.js",
   "browser": "dist/vue-image-upload-resize.js",
   "unpkg": "dist/vue-image-upload-resize.js",
-  "style": "dist/vue-image-upload-resize.css",
+  "keywords": [
+    "vue",
+    "upload",
+    "uploader",
+    "img",
+    "image",
+    "resize"
+  ],
   "files": [
     "dist",
     "src"
