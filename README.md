@@ -1,7 +1,7 @@
 # Vue Image Upload and Resize
 A Vue.js Plugin Component for client-side image upload with optional resizing and exif-based autorotate.
 
-Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of two optional dependencies: [Exif.js](https://github.com/exif-js/exif-js) (for autorotate) 
+Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of two optional dependencies: [Exif.js](https://github.com/exif-js/exif-js) (for autorotate)
 and [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
@@ -40,7 +40,7 @@ export default {
     :maxWidth="512"
     :quality="0.7"
     :autoRotate=true
-    :outputFormat="verbose"
+    outputFormat="verbose"
     :preview=false
     :className="['fileinput', { 'fileinput--loaded' : hasImage }]"
     @input="setImage"
@@ -53,7 +53,7 @@ export default {
 ## Input label slot
 An optional label tag can be added as a slot
 
-### Example 
+### Example
 ```html
 <image-uploader ... >
       <label for="fileInput" slot="upload-label">
@@ -151,7 +151,7 @@ On end of upload.
 
 
 ## Optional dependencies
-If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries must be loaded to 
+If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries must be loaded to
 
 ### the global scope...
 
