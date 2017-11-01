@@ -1,5 +1,5 @@
 /*!
- * vue-image-upload-resize v1.0.2
+ * vue-image-upload-resize v1.1.0
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2017 Svale Fossåskaret
  * Released under the MIT License.
@@ -513,6 +513,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.0.2';
+var version = '1.1.0';
 
 export { ImageUploader, version };export default plugin;
