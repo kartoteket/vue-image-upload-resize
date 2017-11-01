@@ -1,9 +1,11 @@
 /*!
- * vue-image-upload-resize v1.1.0
+ * vue-image-upload-resize v1.1.2
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2017 Svale Fossåskaret
  * Released under the MIT License.
  */
+
+ if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }
 
 import EXIF from 'exif-js';
 import dataURLtoBlob from 'blueimp-canvas-to-blob';
@@ -513,6 +515,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.1.0';
+var version = '1.1.2';
 
 export { ImageUploader, version };export default plugin;
