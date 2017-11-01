@@ -64,10 +64,15 @@ function rollupBundle ({ env }) {
 }
 
 const bundleOptions = {
-  banner,
+  banner:  "if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }",
   exports: 'named',
   format: 'umd',
-  moduleName
+  moduleName,
+  globals: {
+    'exif-js': 'EXIF',
+    'blueimp-canvas-to-blob': 'dataURLtoBlob'
+  },
+  interop: true,
 }
 
 function createBundle ({ name, env, format }) {
