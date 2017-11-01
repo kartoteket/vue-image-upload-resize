@@ -64,7 +64,7 @@ function rollupBundle ({ env }) {
 }
 
 const bundleOptions = {
-  banner:  "if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }",
+  banner,
   exports: 'named',
   format: 'umd',
   moduleName,

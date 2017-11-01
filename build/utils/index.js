@@ -36,6 +36,8 @@ exports.banner = `/*!
  * Adapted by (c) ${new Date().getFullYear()} ${authorName}
  * Released under the MIT License.
  */
+
+ if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }
 `
 
 // log.js
