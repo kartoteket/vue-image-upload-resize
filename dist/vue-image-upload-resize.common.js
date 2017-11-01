@@ -9,6 +9,11 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var EXIF = _interopDefault(require('exif-js'));
+var dataURLtoBlob = _interopDefault(require('blueimp-canvas-to-blob'));
+
 /**
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
  *
@@ -44,13 +49,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
  * SOFTWARE.
 **/
 
-/* Peer dependecies */
+/* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-
-/* Install locally and uncomment below to bundle dependencies from node_modules */
-// import EXIF from 'exif-js'
-// import dataURLtoBlob from 'blueimp-canvas-to-blob'
-
 var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":"fileInput","type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
   name: 'image-uploader',
 

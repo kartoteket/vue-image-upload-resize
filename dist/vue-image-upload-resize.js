@@ -6,10 +6,13 @@
  */
 
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.VueImageUploadResize = global.VueImageUploadResize || {})));
-}(this, (function (exports) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('exif-js'), require('blueimp-canvas-to-blob')) :
+	typeof define === 'function' && define.amd ? define(['exports', 'exif-js', 'blueimp-canvas-to-blob'], factory) :
+	(factory((global.VueImageUploadResize = global.VueImageUploadResize || {}),global.EXIF,global.dataURLtoBlob));
+}(this, (function (exports,EXIF,dataURLtoBlob) { 'use strict';
+
+EXIF = 'default' in EXIF ? EXIF['default'] : EXIF;
+dataURLtoBlob = 'default' in dataURLtoBlob ? dataURLtoBlob['default'] : dataURLtoBlob;
 
 /**
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
@@ -46,13 +49,8 @@
  * SOFTWARE.
 **/
 
-/* Peer dependecies */
+/* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-
-/* Install locally and uncomment below to bundle dependencies from node_modules */
-// import EXIF from 'exif-js'
-// import dataURLtoBlob from 'blueimp-canvas-to-blob'
-
 var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":"fileInput","type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
   name: 'image-uploader',
 

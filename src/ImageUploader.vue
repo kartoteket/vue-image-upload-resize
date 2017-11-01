@@ -48,12 +48,10 @@
  * SOFTWARE.
 **/
 
-/* Peer dependecies */
+/* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-
-/* Install locally and uncomment below to bundle dependencies from node_modules */
-// import EXIF from 'exif-js'
-// import dataURLtoBlob from 'blueimp-canvas-to-blob'
+import EXIF from 'exif-js'
+import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
   name: 'image-uploader',

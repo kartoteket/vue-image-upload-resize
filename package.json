@@ -54,10 +54,12 @@
     ]
   },
   "#pre-commit": "lint:staged",
-  "peerDependencies": {
-    "vue": "^2.4.2",
+  "dependencies": {
     "exif-js": "^2.3.0",
     "blueimp-canvas-to-blob": "^3.14.0"
+  },
+  "peerDependencies": {
+    "vue": "^2.4.2"
   },
   "devDependencies": {
     "add-asset-html-webpack-plugin": "^2.1.1",

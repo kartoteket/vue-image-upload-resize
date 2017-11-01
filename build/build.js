@@ -58,7 +58,8 @@ function rollupBundle ({ env }) {
       buble({
         objectAssign: 'Object.assign'
       })
-    ]
+    ],
+    external: ['exif-js','blueimp-canvas-to-blob']
   })
 }
 
