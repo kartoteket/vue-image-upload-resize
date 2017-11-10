@@ -7,31 +7,36 @@ and [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
 
-## Installation
-
-```bash
-npm install --save vue-image-upload-resize
-```
-
 ## Usage
 
 
-### Script
+### Install and import as npm module
+```bash
+npm install --save vue-image-upload-resize
+```
 ```js
 import { ImageUploader } from 'vue-image-upload-resize'
+```
+### ... or load and register as global script
+```html
+<script src="js/exif.js"></script>
+```
+```js
+var ImageUploader = VueImageUploadResize.ImageUploader;
+```
 
+## Add as component
+```js
 export default {
   (...)
-
   components: {
     ImageUploader
   },
-
   (...)
 }
 ```
 
-### Markup
+## Markup
 
 ```html
 <template>
@@ -151,9 +156,7 @@ On end of upload.
 
 
 ## Optional dependencies
-If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries must be loaded to
-
-### the global scope...
+If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries - exif.js and  canvas-to-blob.min.js - must be available. If the plugin is loaded with ```<script>```-tag in global scope, so much the relevant lilbraries:
 
 #### index.html
 
@@ -161,20 +164,8 @@ If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries m
 <script src="js/exif.js" async defer></script>
 <script src="js/canvas-to-blob.min.js" async defer></script>
 ```
-### ... or bundled
-with the plugin in the build process
 
-```bash
-npm install --save exif-js blueimp-canvas-to-blob
-```
-
-#### imageUploader.vue
-```js
-/* Install locally and uncomment below to bundle dependencies from node_modules */
-import EXIF from 'exif-js'
-import dataURLtoBlob from 'blueimp-canvas-to-blob'
-```
-
+If loaded as module, npm handles all dependecies.
 
 
 ## Development
