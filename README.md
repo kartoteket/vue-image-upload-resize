@@ -19,7 +19,7 @@ import { ImageUploader } from 'vue-image-upload-resize'
 ```
 ### ... or load and register as global script
 ```html
-<script src="js/exif.js"></script>
+<script src="https://unpkg.com/vue-image-upload-resize@1.1.3/dist/vue-image-upload-resize.js"></script>
 ```
 ```js
 var ImageUploader = VueImageUploadResize.ImageUploader;
