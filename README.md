@@ -76,7 +76,11 @@ An optional label tag can be added as a slot
 ## Settings
 
 ### Props
-
+- **id**
+The ID for the file input, required if more than one instance should be used on the same page.     
+    * @default fileInput
+    * @type {String}
+     
 - **maxWidth**
 An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
 	* type: Number
