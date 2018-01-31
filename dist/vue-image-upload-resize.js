@@ -1,7 +1,7 @@
 /*!
  * vue-image-upload-resize v1.1.4
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
- * Adapted by (c) 2017 Svale Fossåskaret
+ * Adapted by (c) 2018 Svale Fossåskaret
  * Released under the MIT License.
  */
 
@@ -53,10 +53,21 @@ dataURLtoBlob = 'default' in dataURLtoBlob ? dataURLtoBlob['default'] : dataURLt
 
 /* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":"fileInput","type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
+var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":_vm.id,"type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
   name: 'image-uploader',
 
   props: {
+    /**
+     * The ID for the file input, required if more than one instance should be used on the same page.
+     *
+     * @default fileInput
+     * @type {String}
+     */
+    id: {
+      type: String,
+      default: 'fileInput'
+    },
+
     /**
      * An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
      * @default 1024
