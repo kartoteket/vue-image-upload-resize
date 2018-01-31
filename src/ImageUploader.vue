@@ -2,7 +2,7 @@
   <div>
     <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100">
     <input
-      id="fileInput"
+      :id="id"
       :class="className"
       type="file"
       @change="uploadFile"
@@ -57,6 +57,17 @@ export default {
   name: 'image-uploader',
 
   props: {
+    /**
+     * The ID for the file input, required if more than one instance should be used on the same page.
+     *
+     * @default fileInput
+     * @type {String}
+     */
+    id: {
+      type: String,
+      default: 'fileInput'
+    },
+
     /**
      * An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
      * @default 1024
