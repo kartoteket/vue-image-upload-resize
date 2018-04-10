@@ -7,7 +7,8 @@
       type="file"
       @change="uploadFile"
       accept="image/*"
-      capture="camera">
+      :capture="capture"
+      >
       <slot name="upload-label"></slot>
   </div>
 </template>
@@ -158,6 +159,16 @@ export default {
     className: {
       type: [String, Array],
       default: 'fileinput'
+    },
+
+    /**
+     * Sets an optional capture attribute. (camera, user, environment)
+     * @default empty
+     * @type {String}
+     */
+    capture: {
+      type: [String],
+      default: null
     },
 
     /**

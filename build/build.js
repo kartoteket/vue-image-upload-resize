@@ -59,7 +59,7 @@ function rollupBundle ({ env }) {
         objectAssign: 'Object.assign'
       })
     ],
-    external: ['exif-js','blueimp-canvas-to-blob']
+    external: ['exif-js', 'blueimp-canvas-to-blob']
   })
 }
 
@@ -72,7 +72,7 @@ const bundleOptions = {
     'exif-js': 'EXIF',
     'blueimp-canvas-to-blob': 'dataURLtoBlob'
   },
-  interop: true,
+  interop: true
 }
 
 function createBundle ({ name, env, format }) {

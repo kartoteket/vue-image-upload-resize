@@ -48,6 +48,7 @@ export default {
     outputFormat="verbose"
     :preview=false
     :className="['fileinput', { 'fileinput--loaded' : hasImage }]"
+    capture="environment"
     @input="setImage"
     @onUpload="startImageResize"
     @onComplete="endImageResize"
@@ -126,6 +127,11 @@ Sets the desired class name for the input element
    * type: String or Array
    * default: 'fileinput'
 
+- **capture**
+Sets an optional capture attribute (camera, user, environment) to the input element.
+The "camera" value (or no value) let's the browser decide which camera to use, while the "user" and "environment" values tell the browser to prefer the front and rear cameras, respectively.
+   * type: String
+   * default: empty (off)
 
 - **debug**
 How much to write to the console. 0 = silent. 1 = quite. 2 = loud
@@ -160,7 +166,7 @@ On end of upload.
 
 
 ## Optional dependencies
-If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries - exif.js and  canvas-to-blob.min.js - must be available. If the plugin is loaded with ```<script>```-tag in global scope, so much the relevant lilbraries:
+If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries - exif.js and  canvas-to-blob.min.js - must be available. If the plugin is loaded with ```<script>```-tag in global scope, so must the relevant lilbraries:
 
 #### index.html
 
