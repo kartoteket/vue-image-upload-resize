@@ -1,6 +1,6 @@
 {
   "processors": ["stylelint-processor-html"],
-  "extends": "stylelint-config-standard",
+  "extends": "stylelint-config-recommended",
   "rules": {
     "no-empty-source": null
   }
