@@ -37,7 +37,8 @@ exports.banner = `/*!
  * Released under the MIT License.
  */
 
- if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }
+ if(typeof EXIF === 'undefined'){    var EXIF = []; }
+ if(typeof dataURLtoBlob == 'undefined'){   var dataURLtoBlob = []; }
 `
 
 // log.js
