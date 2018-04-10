@@ -1,11 +1,12 @@
 /*!
- * vue-image-upload-resize v1.1.4
+ * vue-image-upload-resize v1.1.6
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2018 Svale Fossåskaret
  * Released under the MIT License.
  */
 
- if(typeof EXIF === 'undefined'){ var EXIF; } if(typeof dataURLtoBlob == 'undefined'){ var dataURLtoBlob; }
+ if(typeof EXIF === 'undefined'){    var EXIF = []; }
+ if(typeof dataURLtoBlob == 'undefined'){   var dataURLtoBlob = []; }
 
 import EXIF from 'exif-js';
 import dataURLtoBlob from 'blueimp-canvas-to-blob';
@@ -47,7 +48,7 @@ import dataURLtoBlob from 'blueimp-canvas-to-blob';
 
 /* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":_vm.id,"type":"file","accept":"image/*","capture":"camera"},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
+var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":_vm.id,"type":"file","accept":"image/*","capture":_vm.capture},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
   name: 'image-uploader',
 
   props: {
@@ -152,6 +153,16 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
     className: {
       type: [String, Array],
       default: 'fileinput'
+    },
+
+    /**
+     * Sets an optional capture attribute. (camera, user, environment)
+     * @default empty
+     * @type {String}
+     */
+    capture: {
+      type: [String],
+      default: null
     },
 
     /**
@@ -526,6 +537,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.1.4';
+var version = '1.1.6';
 
 export { ImageUploader, version };export default plugin;
