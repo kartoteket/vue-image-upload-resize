@@ -230,7 +230,6 @@ export default {
       var file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
         var mimetype = file.type
-        console.log(this.doNotResize.indexOf(mimetype.split('/')[1]))
         // If the file is an image that should be resized
         if (mimetype.split('/')[0] === 'image' && (!this.doNotResize || (typeof this.doNotResize === 'string' && mimetype != 'image/'+this.doNotResize) || (this.doNotResize.indexOf && this.doNotResize.indexOf(mimetype.split('/')[1]) === -1))) {
           this.emitLoad()
