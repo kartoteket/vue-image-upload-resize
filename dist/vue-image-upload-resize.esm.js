@@ -1,5 +1,5 @@
 /*!
- * vue-image-upload-resize v1.2.0
+ * vue-image-upload-resize v1.2.1
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2018 Svale Fossåskaret
  * Released under the MIT License.
@@ -191,10 +191,10 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
      * If only 1 extension, it can be provided directly as a string.
      * Eg: ['gif', 'svg'] or 'gif'
      * @default null
-     * @type {Boolean}
+     * @type {String or Array}
      */
     doNotResize: {
-      type: [Array],
+      type: [String, Array],
       default: null
     },
 
@@ -589,6 +589,6 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.2.0';
+var version = '1.2.1';
 
 export { ImageUploader, version };export default plugin;

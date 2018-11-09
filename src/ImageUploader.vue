@@ -197,10 +197,10 @@ export default {
      * If only 1 extension, it can be provided directly as a string.
      * Eg: ['gif', 'svg'] or 'gif'
      * @default null
-     * @type {Boolean}
+     * @type {String or Array}
      */
     doNotResize: {
-      type: [Array],
+      type: [String, Array],
       default: null
     },
 
