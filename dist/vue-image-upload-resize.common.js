@@ -1,5 +1,5 @@
 /*!
- * vue-image-upload-resize v1.1.6
+ * vue-image-upload-resize v1.2.0
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2018 Svale Fossåskaret
  * Released under the MIT License.
@@ -54,7 +54,7 @@ var dataURLtoBlob = _interopDefault(require('blueimp-canvas-to-blob'));
 
 /* Dependecies */
 /* global EXIF:true, dataURLtoBlob:true */
-var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":_vm.id,"type":"file","accept":"image/*","capture":_vm.capture},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
+var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('img',{directives:[{name:"show",rawName:"v-show",value:(_vm.imagePreview),expression:"imagePreview"}],staticClass:"img-preview",attrs:{"src":_vm.imagePreview,"width":"100"}}),_vm._v(" "),_c('input',{class:_vm.className,attrs:{"id":_vm.id,"type":"file","accept":_vm.accept,"capture":_vm.capture},on:{"change":_vm.uploadFile}}),_vm._t("upload-label")],2)},staticRenderFns: [],
   name: 'image-uploader',
 
   props: {
@@ -141,6 +141,17 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
     },
 
     /**
+     * A function (or a string) that return a string to be used as src for the preview of files that are not images
+     * If function, it receives the memetype of the file as parameter
+     * @default null
+     * @type {String or Function}
+     */
+    defaultPreviewImage: {
+      type: [String, Function],
+      default: null
+    },
+
+    /**
      * Sets the desired format for the returned image. Available formats are
      * 'string' (base64), verbose (object) or 'blob' (object)
      * @default {base64}
@@ -167,7 +178,29 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
      * @type {String}
      */
     capture: {
-      type: [String],
+      type: String,
+      default: null
+    },
+
+    /**
+     * Sets the accept attribute, in case the same input can accept other files
+     * @default image/*
+     * @type {String}
+     */
+    accept: {
+      type: String,
+      default: 'image/*'
+    },
+
+    /**
+     * An array of image's extensions that will not be resized.
+     * If only 1 extension, it can be provided directly as a string.
+     * Eg: ['gif', 'svg'] or 'gif'
+     * @default null
+     * @type {Boolean}
+     */
+    doNotResize: {
+      type: [Array],
       default: null
     },
 
@@ -196,24 +229,43 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
     uploadFile: function uploadFile (e) {
       var file = e.target.files && e.target.files.length ? e.target.files[0] : null;
       if (file) {
-        this.emitLoad();
-        this.handleFile(file, this.emitComplete);
+        var mimetype = file.type;
+        console.log(this.doNotResize.indexOf(mimetype.split('/')[1]));
+        // If the file is an image that should be resized
+        if (mimetype.split('/')[0] === 'image' && (!this.doNotResize || (typeof this.doNotResize === 'string' && mimetype != 'image/'+this.doNotResize) || (this.doNotResize.indexOf && this.doNotResize.indexOf(mimetype.split('/')[1]) === -1))) {
+          this.emitLoad();
+          this.handleFile(file, this.emitComplete);
+        // Else, we do nothing
+        } else {
+          // Display preview of the new image if it's an image that has not been resized
+          if (this.preview && mimetype.split('/')[0] === 'image') {
+            this.imagePreview = URL.createObjectURL(file);
+          // If there is a function to attribute a default image for files that are not images
+          } else if (this.preview && typeof this.previewDefaultImageFct === 'function' && this.previewDefaultImageFct(mimetype)) {
+            this.imagePreview = this.previewDefaultImageFct(mimetype);
+          // Otherwise display the default preview
+          } else if (this.preview && this.previewDefaultImage) {
+            this.imagePreview = this.previewDefaultImage;
+          }
+          this.emitEvent(file, mimetype);
+        }
       }
     },
 
     /**
      * Emit event with output
      * @param  {mixed} output   the resized image. type can be simple dataUrl string, verbose object or Blob instance
+     * @param  {String} mimetype   mimetype of the file :
      * @return {[type]}        [description]
      */
-    emitEvent: function emitEvent (output) {
+    emitEvent: function emitEvent (output, mimetype) {
       if (this.debug > 1) {
         console.log('emitEvent() is called with output:');
         console.log(output);
       }
 
-      this.$emit('input', output);
-      this.$emit('change', output);
+      this.$emit('input', output, mimetype);
+      this.$emit('change', output, mimetype);
     },
 
     emitLoad: function emitLoad () {
@@ -411,7 +463,7 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
 
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
-      this.emitEvent(this.formatOutput(imageData));
+      this.emitEvent(this.formatOutput(imageData), this.currentFile.type);
 
       // complete
       completionCallback();
@@ -543,7 +595,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.1.6';
+var version = '1.2.0';
 
 exports['default'] = plugin;
 exports.ImageUploader = ImageUploader;
