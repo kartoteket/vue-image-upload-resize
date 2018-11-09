@@ -141,22 +141,13 @@ export default {
     },
 
     /**
-     * A string used as src of the preview for files that are not images
+     * A function (or a string) that return a string to be used as src for the preview of files that are not images
+     * If function, it receives the memetype of the file as parameter
      * @default null
-     * @type {String}
+     * @type {String or Function}
      */
-    previewDefaultImage: {
-      type: String,
-      default: null
-    },
-
-    /**
-     * A function that based on the mimetype returns a default preview for files that are not images
-     * @default return null
-     * @type {Function}
-     */
-    previewDefaultImageFct: {
-      type: Function,
+    defaultPreviewImage: {
+      type: [String, Function],
       default: null
     },
 
@@ -187,7 +178,7 @@ export default {
      * @type {String}
      */
     capture: {
-      type: [String],
+      type: String,
       default: null
     },
 
@@ -197,18 +188,20 @@ export default {
      * @type {String}
      */
     accept: {
-      type: [String],
+      type: String,
       default: 'image/*'
     },
 
     /**
-     * Do not resize gif
-     * @default false
+     * An array of image's extensions that will not be resized.
+     * If only 1 extension, it can be provided directly as a string.
+     * Eg: ['gif', 'svg'] or 'gif'
+     * @default null
      * @type {Boolean}
      */
-    ignoreGif: {
-      type: [Boolean],
-      default: false
+    doNotResize: {
+      type: [Array],
+      default: null
     },
 
     /**
@@ -237,17 +230,18 @@ export default {
       var file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
         var mimetype = file.type
+        console.log(this.doNotResize.indexOf(mimetype.split('/')[1]))
         // If the file is an image that should be resized
-        if (mimetype.split('/')[0] === 'image' && (!this.ignoreGif || mimetype != 'image/gif')) {
+        if (mimetype.split('/')[0] === 'image' && (!this.doNotResize || (typeof this.doNotResize === 'string' && mimetype != 'image/'+this.doNotResize) || (this.doNotResize.indexOf && this.doNotResize.indexOf(mimetype.split('/')[1]) === -1))) {
           this.emitLoad()
           this.handleFile(file, this.emitComplete)
         // Else, we do nothing
         } else {
-          // Display preview of the new image if it's a gif that has not been resized
-          if (this.preview && mimetype === 'image/gif') {
+          // Display preview of the new image if it's an image that has not been resized
+          if (this.preview && mimetype.split('/')[0] === 'image') {
             this.imagePreview = URL.createObjectURL(file)
           // If there is a function to attribute a default image for files that are not images
-          } else if (this.preview && this.previewDefaultImageFct && this.previewDefaultImageFct(mimetype)) {
+          } else if (this.preview && typeof this.previewDefaultImageFct === 'function' && this.previewDefaultImageFct(mimetype)) {
             this.imagePreview = this.previewDefaultImageFct(mimetype)
           // Otherwise display the default preview
           } else if (this.preview && this.previewDefaultImage) {
