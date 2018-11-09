@@ -245,7 +245,7 @@ export default {
         } else {
           // Display preview of the new image if it's a gif that has not been resized
           if (this.preview && mimetype === 'image/gif') {
-            this.imagePreview = URL.createObjectURL(imageData)
+            this.imagePreview = URL.createObjectURL(file)
           // If there is a function to attribute a default image for files that are not images
           } else if (this.preview && this.previewDefaultImageFct && this.previewDefaultImageFct(mimetype)) {
             this.imagePreview = this.previewDefaultImageFct(mimetype)
