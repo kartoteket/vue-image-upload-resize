@@ -6,7 +6,7 @@
       :class="className"
       type="file"
       @change="uploadFile"
-      accept="image/*"
+      :accept="accept"
       :capture="capture"
       >
       <slot name="upload-label"></slot>
@@ -141,6 +141,26 @@ export default {
     },
 
     /**
+     * A string used as src of the preview for files that are not images
+     * @default null
+     * @type {String}
+     */
+    previewDefaultImage: {
+      type: String,
+      default: null
+    },
+
+    /**
+     * A function that based on the mimetype returns a default preview for files that are not images
+     * @default return null
+     * @type {Function}
+     */
+    previewDefaultImageFct: {
+      type: Function,
+      default: null
+    },
+
+    /**
      * Sets the desired format for the returned image. Available formats are
      * 'string' (base64), verbose (object) or 'blob' (object)
      * @default {base64}
@@ -172,6 +192,26 @@ export default {
     },
 
     /**
+     * Sets the accept attribute, in case the same input can accept other files
+     * @default image/*
+     * @type {String}
+     */
+    accept: {
+      type: [String],
+      default: 'image/*'
+    },
+
+    /**
+     * Do not resize gif
+     * @default false
+     * @type {Boolean}
+     */
+    ignoreGif: {
+      type: [Boolean],
+      default: false
+    },
+
+    /**
      * How much to write to the console. 0 = silent. 1 = quite. 2 = loud
      * @default false
      * @type {Boolean}
@@ -196,24 +236,42 @@ export default {
     uploadFile (e) {
       var file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
-        this.emitLoad()
-        this.handleFile(file, this.emitComplete)
+        var mimetype = file.type
+        // If the file is an image that should be resized
+        if (mimetype.split('/')[0] === 'image' && (!this.ignoreGif || mimetype != 'image/gif')) {
+          this.emitLoad()
+          this.handleFile(file, this.emitComplete)
+        // Else, we do nothing
+        } else {
+          // Display preview of the new image if it's a gif that has not been resized
+          if (this.preview && mimetype === 'image/gif') {
+            this.imagePreview = URL.createObjectURL(imageData)
+          // If there is a function to attribute a default image for files that are not images
+          } else if (this.preview && this.previewDefaultImageFct && this.previewDefaultImageFct(mimetype)) {
+            this.imagePreview = this.previewDefaultImageFct(mimetype)
+          // Otherwise display the default preview
+          } else if (this.preview && this.previewDefaultImage) {
+            this.imagePreview = this.previewDefaultImage
+          }
+          this.emitEvent(file, mimetype)
+        }
       }
     },
 
     /**
      * Emit event with output
      * @param  {mixed} output   the resized image. type can be simple dataUrl string, verbose object or Blob instance
+     * @param  {String} mimetype   mimetype of the file :
      * @return {[type]}        [description]
      */
-    emitEvent (output) {
+    emitEvent (output, mimetype) {
       if (this.debug > 1) {
         console.log('emitEvent() is called with output:')
         console.log(output)
       }
 
-      this.$emit('input', output)
-      this.$emit('change', output)
+      this.$emit('input', output, mimetype)
+      this.$emit('change', output, mimetype)
     },
 
     emitLoad () {
@@ -409,7 +467,7 @@ export default {
 
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
-      this.emitEvent(this.formatOutput(imageData))
+      this.emitEvent(this.formatOutput(imageData), this.currentFile.type)
 
       // complete
       completionCallback()
