@@ -1,5 +1,5 @@
 /*!
- * vue-image-upload-resize v1.2.1
+ * vue-image-upload-resize v1.2.2
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2018 Svale Fossåskaret
  * Released under the MIT License.
@@ -233,7 +233,9 @@ var ImageUploader = {render: function(){var _vm=this;var _h=_vm.$createElement;v
         // If the file is an image that should be resized
         if (mimetype.split('/')[0] === 'image' && (!this.doNotResize || (typeof this.doNotResize === 'string' && mimetype != 'image/'+this.doNotResize) || (this.doNotResize.indexOf && this.doNotResize.indexOf(mimetype.split('/')[1]) === -1))) {
           this.emitLoad();
-          this.handleFile(file, this.emitComplete);
+          this.$nextTick(function () {
+            this.handleFile(file, this.emitComplete);
+          });
         // Else, we do nothing
         } else {
           // Display preview of the new image if it's an image that has not been resized
@@ -594,7 +596,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(plugin);
 }
 
-var version = '1.2.1';
+var version = '1.2.2';
 
 exports['default'] = plugin;
 exports.ImageUploader = ImageUploader;

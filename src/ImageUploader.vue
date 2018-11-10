@@ -233,7 +233,9 @@ export default {
         // If the file is an image that should be resized
         if (mimetype.split('/')[0] === 'image' && (!this.doNotResize || (typeof this.doNotResize === 'string' && mimetype != 'image/'+this.doNotResize) || (this.doNotResize.indexOf && this.doNotResize.indexOf(mimetype.split('/')[1]) === -1))) {
           this.emitLoad()
-          this.handleFile(file, this.emitComplete)
+          this.$nextTick(function () {
+            this.handleFile(file, this.emitComplete)
+          })
         // Else, we do nothing
         } else {
           // Display preview of the new image if it's an image that has not been resized
