@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100" /> <input :id="id" :class="className" type="file" @change="uploadFile" accept="image/*" :capture="capture" />
+    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="100" /> <input :id="id" :class="className" type="file" @change="uploadFile" accept="accept" :capture="capture" />
     <slot name="upload-label"></slot>
   </div>
 </template>
@@ -133,8 +133,8 @@ export default {
 
     /**
      * Sets the desired format for the returned image. Available formats are
-     * 'string' (base64), 'verbose' (object), 'blob' (object), 'file' (orignal unmodified file input)
-     * @default {base64}
+     * 'string' (base64), 'verbose' (object), 'blob' (object), 'file' (unmodified File object)
+     * @default {string}
      * @type {String}
      */
     outputFormat: {
@@ -163,6 +163,30 @@ export default {
     },
 
     /**
+     * Sets the accept attribute, in case the same input can accept other files
+     * Shoub be a comma seperated string, eg 'audio/*,video/*,image/*'
+     * @default image/*
+     * @type {String}
+     */
+    accept: {
+      type: String,
+      default: 'image/*',
+    },
+
+    /**
+     * An array of image's extensions that will not be resized (['gif', 'svg'])
+     * If only 1 extension, it can be provided directly as a stringEg ('gif')
+     * Disable all resizing with a catch all ('*')
+     * If not resized, the returned output will always be the unmodifed File object
+     * @default []
+     * @type {String or Array}
+     */
+    doNotResize: {
+      type: [String, Array],
+      default: () => [],
+    },
+
+    /**
      * How much to write to the console. 0 = silent. 1 = quite. 2 = loud
      * @default false
      * @type {Boolean}
@@ -176,6 +200,7 @@ export default {
   data() {
     return {
       imagePreview: null,
+      currentFile: {},
     }
   },
   methods: {
@@ -193,13 +218,12 @@ export default {
 
     /**
      * Emit event with output
-     * @param  {mixed} output   the resized image. type can be simple dataUrl string, verbose object or Blob instance
-     * @return {[type]}        [description]
+     * @param  {mixed} output - The resized image. type can be simple dataUrl string, verbose object or Blob instance
      */
     emitEvent(output) {
       this.log('emitEvent() is called with output:', 2, output)
-      this.$emit('input', 'output')
-      this.$emit('change', 'output')
+      this.$emit('input', output)
+      this.$emit('change', output)
     },
 
     emitLoad() {
@@ -224,41 +248,50 @@ export default {
       var img = document.createElement('img')
       var reader = new window.FileReader()
 
-      reader.onload = function(e) {
-        that.log('reader.onload() is triggered', 2)
+      var mimetype = this.currentFile.type.split('/') // NB: Not supprted by Safari on iOS !??! @todo: TEST!
+      var isImage = mimetype[0] === 'image'
+      var doNotResize = typeof this.doNotResize === 'string' ? [this.doNotResize] : this.doNotResize // cast to array
 
-        img.src = e.target.result
-        img.onload = function() {
-          that.log('img.onload() is triggered', 2)
+      // Don't resize if not image or doNotResize is set
+      if (!isImage || doNotResize.includes('*') || doNotResize.includes(mimetype[1])) {
+        that.log('No Resize, return file directly')
+        that.emitEvent(file) // does NOT respect the output format prop
+      } else {
+        reader.onload = function(e) {
+          that.log('reader.onload() is triggered', 2)
 
-          // Rotate image first if required
-          if (that.autoRotate) {
-            if (typeof EXIF === 'undefined') {
-              console.warn('Missing EXIF library! exif-js.js must be loaded to use autoRotate')
-              console.warn('Continuing without rotation')
-              that.scaleImage(img, completionCallback)
-            } else {
-              that.log('ImageUploader: detecting image orientation...')
+          img.src = e.target.result
+          img.onload = function() {
+            that.log('img.onload() is triggered', 2)
 
-              if (typeof EXIF.getData === 'function' && typeof EXIF.getTag === 'function') {
-                EXIF.getData(img, function() {
-                  var orientation = EXIF.getTag(this, 'Orientation')
-                  that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                  that.scaleImage(img, completionCallback, orientation)
-                })
-              } else {
-                console.error("ImageUploader: can't read EXIF data, the Exif.js library not found")
+            // Rotate image first if required
+            if (that.autoRotate) {
+              if (typeof EXIF === 'undefined') {
+                console.warn('Missing EXIF library! exif-js.js must be loaded to use autoRotate')
+                console.warn('Continuing without rotation')
                 that.scaleImage(img, completionCallback)
+              } else {
+                that.log('ImageUploader: detecting image orientation...')
+
+                if (typeof EXIF.getData === 'function' && typeof EXIF.getTag === 'function') {
+                  EXIF.getData(img, function() {
+                    var orientation = EXIF.getTag(this, 'Orientation')
+                    that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
+                    that.scaleImage(img, completionCallback, orientation)
+                  })
+                } else {
+                  console.error("ImageUploader: can't read EXIF data, the Exif.js library not found")
+                  that.scaleImage(img, completionCallback)
+                }
               }
+            } else {
+              that.log('No autoRotate')
+              that.scaleImage(img, completionCallback)
             }
-          } else {
-            that.log('No autoRotate')
-            that.scaleImage(img, completionCallback)
           }
         }
+        reader.readAsDataURL(file)
       }
-
-      reader.readAsDataURL(file)
     },
 
     /**
@@ -461,7 +494,8 @@ export default {
      * @param  {string} imageData  dataUrl
      * @return {mixed}             Either simple dataUrl string or
      *                                    object with dataURl and metadata or
-     *                                    blob
+     *                                    blob or
+     *                                    file
      */
     formatOutput(imageData) {
       this.log('ImageUploader: outputFormat: ' + this.outputFormat)
@@ -479,9 +513,14 @@ export default {
         return {
           dataUrl: imageData,
           name: this.currentFile.name,
+          type: this.currentFile.type,
           lastModified: this.currentFile.lastModified,
           lastModifiedDate: this.currentFile.lastModifiedDate,
         }
+      }
+
+      if (this.outputFormat === 'file') {
+        return this.currentFile
       }
 
       // simple base64 dataUrl string by default
