@@ -1,3 +1,9 @@
+/*!
+ * vue-image-upload-resize v1.1.6
+ * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
+ * Adapted by (c) 2018 Svale Fossåskaret
+ * @license MIT.
+ */
 import ImageUploader from './ImageUploader.vue'
 
 const ImageUploaderPlugin = {
