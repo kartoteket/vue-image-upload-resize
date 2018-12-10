@@ -209,7 +209,7 @@ export default {
      * @param  {object} event
      */
     uploadFile(e) {
-      var file = e.target.files && e.target.files.length ? e.target.files[0] : null
+      const file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
         this.emitLoad()
         this.handleFile(file, this.emitComplete)
@@ -244,19 +244,19 @@ export default {
       this.log('handleFile() is called with file:', 2, file)
       this.currentFile = file
 
-      var that = this
-      var img = document.createElement('img')
-      var reader = new window.FileReader()
-
-      var mimetype = this.currentFile.type.split('/') // NB: Not supprted by Safari on iOS !??! @todo: TEST!
-      var isImage = mimetype[0] === 'image'
-      var doNotResize = typeof this.doNotResize === 'string' ? [this.doNotResize] : this.doNotResize // cast to array
+      const mimetype = file.type.split('/') // NB: Not supprted by Safari on iOS !??! @todo: TEST!
+      const isImage = mimetype[0] === 'image'
+      const doNotResize = typeof this.doNotResize === 'string' ? [this.doNotResize] : this.doNotResize // cast to array
 
       // Don't resize if not image or doNotResize is set
       if (!isImage || doNotResize.includes('*') || doNotResize.includes(mimetype[1])) {
-        that.log('No Resize, return file directly')
-        that.emitEvent(file) // does NOT respect the output format prop
+        this.log('No Resize, return file directly')
+        this.emitEvent(file) // does NOT respect the output format prop
       } else {
+        const that = this
+        const img = document.createElement('img')
+        const reader = new window.FileReader()
+
         reader.onload = function(e) {
           that.log('reader.onload() is triggered', 2)
 
@@ -275,7 +275,7 @@ export default {
 
                 if (typeof EXIF.getData === 'function' && typeof EXIF.getTag === 'function') {
                   EXIF.getData(img, function() {
-                    var orientation = EXIF.getTag(this, 'Orientation')
+                    const orientation = EXIF.getTag(this, 'Orientation')
                     that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
                     that.scaleImage(img, completionCallback, orientation)
                   })
@@ -304,17 +304,17 @@ export default {
     scaleImage(img, completionCallback, orientation) {
       this.log('scaleImage() is called', 2)
 
-      var canvas = document.createElement('canvas')
+      let canvas = document.createElement('canvas')
       canvas.width = img.width
       canvas.height = img.height
-      var ctx = canvas.getContext('2d')
+      const ctx = canvas.getContext('2d')
       ctx.save()
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
-      var width = canvas.width
-      var styleWidth = canvas.style.width
-      var height = canvas.height
-      var styleHeight = canvas.style.height
+      const width = canvas.width
+      const styleWidth = canvas.style.width
+      const height = canvas.height
+      const styleHeight = canvas.style.height
       if (typeof orientation === 'undefined') {
         orientation = 1
       }
@@ -361,13 +361,13 @@ export default {
       ctx.restore()
 
       // Let's find the max available width for scaled image
-      var ratio = canvas.width / canvas.height
-      var mWidth = Math.min(this.maxWidth, ratio * this.maxHeight)
+      const ratio = canvas.width / canvas.height
+      let mWidth = Math.min(this.maxWidth, ratio * this.maxHeight)
 
       // suggested re-write by https://github.com/ryancramerdesign
       // https://github.com/rossturner/HTML5-ImageUploader/issues/13
       if (this.maxSize > 0 && this.maxSize < (canvas.width * canvas.height) / 1000000) {
-        var mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000)
+        const mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000)
         mWidth = mWidth > 0 ? Math.min(mWidth, mSize) : mSize
       }
 
@@ -393,8 +393,8 @@ export default {
 
       // suggested re-write by https://github.com/ryancramerdesign
       // https://github.com/rossturner/HTML5-ImageUploader/issues/13
-      var quality = this.currentFile.type === 'image/jpeg' ? this.quality : 1.0
-      var imageData = canvas.toDataURL(this.currentFile.type, quality)
+      const quality = this.currentFile.type === 'image/jpeg' ? this.quality : 1.0
+      const imageData = canvas.toDataURL(this.currentFile.type, quality)
       if (typeof this.onScale === 'function') {
         this.onScale(imageData)
       }
@@ -416,14 +416,14 @@ export default {
     },
 
     scaleCanvasWithAlgorithm(canvas, maxWidth) {
-      var scaledCanvas = document.createElement('canvas')
-      var scale = maxWidth / canvas.width
+      const scaledCanvas = document.createElement('canvas')
+      const scale = maxWidth / canvas.width
 
       scaledCanvas.width = canvas.width * scale
       scaledCanvas.height = canvas.height * scale
 
-      var srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
-      var destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
+      const srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
+      const destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
 
       this.applyBilinearInterpolation(srcImgData, destImgData, scale)
 
@@ -432,18 +432,17 @@ export default {
       return scaledCanvas
     },
 
-    /* eslint-disable camelcase */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
       function inner(f00, f10, f01, f11, x, y) {
-        var un_x = 1.0 - x
-        var un_y = 1.0 - y
+        const un_x = 1.0 - x
+        const un_y = 1.0 - y
         return f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y
       }
-      var i, j
-      var iyv, iy0, iy1, ixv, ix0, ix1
-      var idxD, idxS00, idxS10, idxS01, idxS11
-      var dx, dy
-      var r, g, b, a
+      let i, j
+      let iyv, iy0, iy1, ixv, ix0, ix1
+      let idxD, idxS00, idxS10, idxS01, idxS11
+      let dx, dy
+      let r, g, b, a
       for (i = 0; i < destCanvasData.height; ++i) {
         iyv = i / scale
         iy0 = Math.floor(iyv)
@@ -480,7 +479,7 @@ export default {
     },
 
     getHalfScaleCanvas(canvas) {
-      var halfCanvas = document.createElement('canvas')
+      const halfCanvas = document.createElement('canvas')
       halfCanvas.width = canvas.width / 2
       halfCanvas.height = canvas.height / 2
 
