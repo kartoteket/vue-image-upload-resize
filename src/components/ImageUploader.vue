@@ -212,7 +212,8 @@ export default {
       const file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
         this.emitLoad()
-        this.handleFile(file, this.emitComplete)
+        this.handleFile(file)
+        this.emitComplete()
       }
     },
 
@@ -237,10 +238,9 @@ export default {
     /**
      * Handels the file manipulation on upload
      * @param  {File}     file The current original uploaded file
-     * @param  {function} completionCallback Not implemted yet
      * @return {}         nada
      */
-    handleFile(file, completionCallback) {
+    handleFile(file) {
       this.log('handleFile() is called with file:', 2, file)
       this.currentFile = file
 
@@ -269,7 +269,7 @@ export default {
               if (typeof EXIF === 'undefined') {
                 console.warn('Missing EXIF library! exif-js.js must be loaded to use autoRotate')
                 console.warn('Continuing without rotation')
-                that.scaleImage(img, completionCallback)
+                that.scaleImage(img)
               } else {
                 that.log('ImageUploader: detecting image orientation...')
 
@@ -277,16 +277,16 @@ export default {
                   EXIF.getData(img, function() {
                     const orientation = EXIF.getTag(this, 'Orientation')
                     that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                    that.scaleImage(img, completionCallback, orientation)
+                    that.scaleImage(img, orientation)
                   })
                 } else {
                   console.error("ImageUploader: can't read EXIF data, the Exif.js library not found")
-                  that.scaleImage(img, completionCallback)
+                  that.scaleImage(img)
                 }
               }
             } else {
               that.log('No autoRotate')
-              that.scaleImage(img, completionCallback)
+              that.scaleImage(img)
             }
           }
         }
@@ -297,11 +297,10 @@ export default {
     /**
      * Performance orientation and scaling logic
      * @param  {[type]} img                [description]
-     * @param  {[type]} completionCallback [description]
      * @param  {[type]} orientation        [description]
      * @return {[type]}                    [description]
      */
-    scaleImage(img, completionCallback, orientation) {
+    scaleImage(img, orientation) {
       this.log('scaleImage() is called', 2)
 
       let canvas = document.createElement('canvas')
@@ -399,7 +398,7 @@ export default {
         this.onScale(imageData)
       }
 
-      this.log('New ImageData is ready. Set Preview, emitEvent and trigger optional callback', 2)
+      this.log('New ImageData is ready', 2)
 
       // Display preview of the new image
       if (this.preview) {
@@ -409,10 +408,6 @@ export default {
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
       this.emitEvent(this.formatOutput(imageData))
-
-      // complete
-      completionCallback()
-      // this.performUpload(imageData, completionCallback)
     },
 
     scaleCanvasWithAlgorithm(canvas, maxWidth) {
