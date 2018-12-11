@@ -1,44 +1,14 @@
-<meta charset="utf-8">
-<title>image-uploader demo</title>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
-<script src="https://unpkg.com/vue-image-upload-resize"></script>
-
-<div id="app"></div>
-
-<script type="text/x-template" id="template">
-  <div id="app">
-    <image-uploader
-      :preview="true"
-      :className="['fileinput', { 'fileinput--loaded': hasImage }]"
-      capture="environment"
-      :debug="0"
-      :autoRotate="true"
-      outputFormat="verbose"
-      @input="setImage"
-    ></image-uploader>
-  </div>
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      new Vue({
-        el: '#app',
-        template: '#template',
-        data() {
-          return { hasImage: false }
-        },
-        methods: {
-          setImage: function(output) {
-            this.hasImage = true
-            this.image = output
-            console.log(output)
-          },
-        },
-      })
-    })
-</script>
-
-<style>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Vue Image Upload and Resize Demo Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="vueImageUploader.umd.min.js"></script>
+  <!-- 
+  <script src="https://unpkg.com/vue-image-upload-resize"></script> -->
+  <style>
     #app {
       font-family: 'Avenir', Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -47,4 +17,40 @@
       color: #2c3e50;
       margin-top: 60px;
     }
-</style>
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/x-template" id="template">
+    <div id="app">
+      <image-uploader
+        :preview="true"
+        :className="['fileinput', { 'fileinput--loaded': hasImage }]"
+        capture="environment"
+        :debug="0"
+        :autoRotate="true"
+        outputFormat="file"
+        @input="setImage"
+      ></image-uploader>
+    </div>
+  </script>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        new Vue({
+          el: '#app',
+          template: '#template',
+          data() {
+            return { hasImage: false }
+          },
+          methods: {
+            setImage: function(output) {
+              this.hasImage = true
+              console.log(output)
+            },
+          },
+        })
+      })
+  </script>
+</body>
+</html>
