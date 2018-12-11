@@ -17,10 +17,9 @@
  *
  * TODO Items:
  * 1. Progress Report
- * 2. Multiple Files
+ * 2. Multiple Files / async handling
  * 3. Support custom completion callback
  * 4. Propper unit testing with https://github.com/visionmedia/supertest
- * 5. Clean up scaffolding and project files
  *
  * LICENSE (from original ImageUploader files by Ross Turner):
  *
