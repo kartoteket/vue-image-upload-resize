@@ -212,7 +212,6 @@ export default {
       if (file) {
         this.emitLoad()
         this.handleFile(file)
-        this.emitComplete()
       }
     },
 
@@ -251,6 +250,7 @@ export default {
       if (!isImage || doNotResize.includes('*') || doNotResize.includes(mimetype[1])) {
         this.log('No Resize, return file directly')
         this.emitEvent(file) // does NOT respect the output format prop
+        this.emitComplete()
       } else {
         const that = this
         const img = document.createElement('img')
@@ -407,6 +407,8 @@ export default {
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
       this.emitEvent(this.formatOutput(imageData))
+
+      this.emitComplete()
     },
 
     scaleCanvasWithAlgorithm(canvas, maxWidth) {
