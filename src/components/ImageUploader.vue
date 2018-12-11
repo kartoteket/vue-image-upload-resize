@@ -236,7 +236,7 @@ export default {
     /**
      * Handels the file manipulation on upload
      * @param  {File}     file The current original uploaded file
-     * @return {}         nada
+     * @return {}         nada (yet)
      */
     handleFile(file) {
       this.log('handleFile() is called with file:', 2, file)
@@ -295,9 +295,8 @@ export default {
 
     /**
      * Performance orientation and scaling logic
-     * @param  {[type]} img                [description]
-     * @param  {[type]} orientation        [description]
-     * @return {[type]}                    [description]
+     * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
+     * @param  {int} orientation - Exif-extracted orientation code
      */
     scaleImage(img, orientation) {
       this.log('scaleImage() is called', 2)
@@ -381,10 +380,12 @@ export default {
         console.warning('ImageUploader: image size is too small')
       }
 
+      // simple resize with a 2:1 ratio
       while (canvas.width >= 2 * mWidth) {
         canvas = this.getHalfScaleCanvas(canvas)
       }
 
+      // When factor less than 2:1 remains, finish up with alogorithm
       if (canvas.width > mWidth) {
         canvas = this.scaleCanvasWithAlgorithm(canvas, mWidth)
       }
@@ -411,6 +412,12 @@ export default {
       this.emitComplete()
     },
 
+    /**
+     * Scale Canvas. Scales the
+     * @param {HTMLElement} canvas - canvas element before finale resize
+     * @param {int} maxWidth - max image width
+     * @returns {HTMLElement} - canvas resized to scale
+     */
     scaleCanvasWithAlgorithm(canvas, maxWidth) {
       const scaledCanvas = document.createElement('canvas')
       const scale = maxWidth / canvas.width
@@ -428,6 +435,14 @@ export default {
       return scaledCanvas
     },
 
+    /**
+     * Interpolation
+     * @param  {ImageData} srcCanvasData - Pixel data of source canvas
+     * @param  {ImageData} destCanvasData - Pixel data of destionation canvas
+     * @param  {int} scale - Resize scale (max width / original width)
+     * @returns {ImageData}  - bilenear Interpolated image pixel data
+     * @author http://web.archive.org/web/20120123142531/http://www.philou.ch/js-bilinear-interpolation.html
+     */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
       function inner(f00, f10, f01, f11, x, y) {
         const un_x = 1.0 - x
@@ -474,6 +489,11 @@ export default {
       }
     },
 
+    /**
+     * getHalfScaleCanvas - return a canvas divided by 2
+     * @param  {HTMLElement} canvas - input document canvas element
+     * @returns  {HTMLElement} half of input canvas
+     */
     getHalfScaleCanvas(canvas) {
       const halfCanvas = document.createElement('canvas')
       halfCanvas.width = canvas.width / 2
@@ -522,6 +542,12 @@ export default {
       return imageData
     },
 
+    /**
+     * Debug logger to console
+     * @param  {string} msg - Message to console
+     * @param  {int} level - Debug level to output
+     * @param  {mixed} details - Extra debug details
+     */
     log(msg, level = 1, details = null) {
       if (this.debug >= level) {
         // eslint-disable-next-line
