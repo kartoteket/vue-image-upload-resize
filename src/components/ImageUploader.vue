@@ -529,8 +529,10 @@ export default {
         if (this.hasExifLibrary) {
           // @todo: cache and reuse exifdata if autoRotate is used
           EXIF.getData(this.currentFile, function() {
-            data.exif = this.exifdata
-            return data
+            if (Object.keys(this.exifdata).length > 0) {
+              data.exif = this.exifdata
+              return data
+            }
           })
         }
 
