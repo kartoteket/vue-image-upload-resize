@@ -271,16 +271,16 @@ export default {
             that.log('img.onload() is triggered', 2)
 
             if (that.autoRotate && that.hasExifLibrary) {
-                  EXIF.getData(img, function() {
-                    const orientation = EXIF.getTag(this, 'Orientation')
-                    that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                    that.scaleImage(img, orientation)
-                  })
-                } else {
-                  that.scaleImage(img)
-                }
-              }
+              EXIF.getData(img, function() {
+                const orientation = EXIF.getTag(this, 'Orientation')
+                that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
+                that.scaleImage(img, orientation)
+              })
+            } else {
+              that.scaleImage(img)
             }
+          }
+        }
         reader.readAsDataURL(file)
       }
     },
@@ -288,7 +288,7 @@ export default {
     /**
      * Performance orientation and scaling logic
      * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
-     * @param  {int} [orientation = 1] - Exif-extracted orientation code
+     * @param  {int} [orientation=0] - Exif-extracted orientation code
      */
     scaleImage(img, orientation = 1) {
       this.log('scaleImage() is called', 2)
@@ -301,10 +301,10 @@ export default {
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
       if (orientation > 1) {
-      const width = canvas.width
-      const styleWidth = canvas.style.width
-      const height = canvas.height
-      const styleHeight = canvas.style.height
+        const width = canvas.width
+        const styleWidth = canvas.style.width
+        const height = canvas.height
+        const styleHeight = canvas.style.height
 
         if (orientation > 4) {
           canvas.width = height
@@ -416,7 +416,7 @@ export default {
       scaledCanvas.height = canvas.height * scale
 
       const srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
-      const destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
+      let destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
 
       this.applyBilinearInterpolation(srcImgData, destImgData, scale)
 
@@ -430,6 +430,7 @@ export default {
      * @param  {ImageData} srcCanvasData - Pixel data of source canvas
      * @param  {ImageData} destCanvasData - Pixel data of destionation canvas
      * @param  {int} scale - Resize scale (max width / original width)
+     * @returns {ImageData}  - bilenear Interpolated image pixel data
      * @author http://web.archive.org/web/20120123142531/http://www.philou.ch/js-bilinear-interpolation.html
      */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
@@ -504,6 +505,10 @@ export default {
     formatOutput(imageData) {
       this.log('ImageUploader: outputFormat: ' + this.outputFormat)
 
+      if (this.outputFormat === 'file') {
+        return this.currentFile
+      }
+
       if (this.outputFormat === 'blob') {
         if (typeof dataURLtoBlob === 'undefined') {
           console.warn('Missing library! blueimp-canvas-to-blob.js must be loaded to output as "blob"')
@@ -526,10 +531,9 @@ export default {
           // @todo: cache and reuse exifdata if autoRotate is used
           EXIF.getData(this.currentFile, function() {
             data.exif = this.exifdata
-            return data
+            // return data
           })
-      }
-
+        }
         return data
       }
 
