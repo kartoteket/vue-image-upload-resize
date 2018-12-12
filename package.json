@@ -7,8 +7,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-lib": "vue-cli-service build --target lib --name image-loader src/components/index.js",
-    "build-wc": "vue-cli-service build --target wc --name image-loader src/components/ImageUploader.vue",
+    "build-lib": "vue-cli-service build --target lib --name vue-image-upload-resize src/components/index.js",
+    "build-wc": "vue-cli-service build --target wc --name vue-image-upload-resize src/components/ImageUploader.vue",
     "test": "vue-cli-service test:unit"
   },
   "dependencies": {
@@ -45,5 +45,13 @@
   ],
   "license": "MIT",
   "main": "dist/vue-image-upload-resize.common.js",
-  "unpkg": "dist/vue-image-upload-resize.umd.js"
+  "unpkg": "dist/vue-image-upload-resize.umd.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kartoteket/vue-image-upload-resize.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kartoteket/vue-image-upload-resize/issues"
+  },
+  "homepage": "https://github.com/kartoteket/vue-image-upload-resize#readme"
 }
