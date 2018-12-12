@@ -7,8 +7,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-lib": "vue-cli-service build --target lib --name vueImageUploader src/components/index.js",
-    "build-wc": "vue-cli-service build --target wc --name vueImageUploader src/components/ImageUploader.vue",
+    "build-lib": "vue-cli-service build --target lib --name image-loader src/components/index.js",
+    "build-wc": "vue-cli-service build --target wc --name image-loader src/components/ImageUploader.vue",
     "test": "vue-cli-service test:unit"
   },
   "dependencies": {

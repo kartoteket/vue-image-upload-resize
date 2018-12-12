@@ -191,15 +191,11 @@ If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries -
 If loaded as module, npm handles all dependecies.
 
 ## Roadmap and todos
-* if wc works, read throught this and use demo example in readme
-* If we should bundle both lib and wc, turn off dist clean
-
 1. Progress report
 2. Support multiple files
 3. Implement completion callback
 4. Propper unit testing of events
 5. ~~Clean up scaffolding and project files~~
-
 
 
 ## Project setup
@@ -221,7 +217,6 @@ yarn run build
 ```
 yarn run build-lib
 ```
-
 
 ### Run your tests
 ```
