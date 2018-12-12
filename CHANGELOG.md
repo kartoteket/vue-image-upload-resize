@@ -6,9 +6,11 @@ and this project adheres (more or less) to [Semantic Versioning](https://semver.
 
 ## [2.0.0] - 2018-12-07 -Unreleased
 ### Added
-- This CHANGELOG file 
-- New prop/attribute 'accept' to open for use with other filetypes than just 'image/*' (thank you @Pitouli)
-- New prop 'doNotResize' to ignore mutation of selected file types (thank you @Pitouli)
+- This CHANGELOG file
+- New prop/attribute 'accept' to open for use with other filetypes than just 'image/*' (thank you [@Pitouli](https://github.com/Pitouli))
+- New prop 'doNotResize' to ignore mutation of selected file types (thank you [@Pitouli](https://github.com/Pitouli))
+- Added 'file' as outputformat
+- Attached exif-data to verbose output. Ref issue #5 (thank you [@adamcolejenkins](https://github.com/adamcolejenkins))
 
 ### Changed
 - Total re-factor to the Vue CLI-3 framework

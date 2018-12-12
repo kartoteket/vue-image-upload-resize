@@ -77,78 +77,83 @@ An optional label tag can be added as a slot
 ## Settings
 
 ### Props
-- **id**
-The ID for the file input, required if more than one instance should be used on the same page.     
-    * @default fileInput
-    * @type {String}
-- **maxWidth**
+
+#### id
+The ID for the file input, required if more than one instance should be used on the same page.
+* default fileInput
+* type String
+
+#### maxWidth
 An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
-	* type: Number
-	* default: 1024
+* type: Number
+* default: 1024
 
-- **maxHeight**
+#### maxHeight
 An integer in pixels for the maximum height allowed for uploaded images, selected images with a greater height than this value will be scaled down before upload.
-	* type: Number,
-	* default: 1024
+* type: Number,
+* default: 1024
 
-- **maxSize**
+#### maxSize
 *NB Is broken, see https://github.com/rossturner/HTML5-ImageUploader/issues/13.*
 A float value in megapixels (MP) for the maximum overall size of the image allowed for uploaded images, selected images with a greater size than this value will be scaled down before upload. If the value is null or is not specified, then maximum size restriction is not applied
-	* type: Number,
-   * default: null
+* type: Number,
+* default: null
 
-- **quality**
+#### quality
 A float between 0 and 1.00 for the image quality to use in the resulting image data, around 0.9 is recommended.
-   * type: Number,
-   * default: 1.00
+* type: Number,
+* default: 1.00
 
-- **scaleRatio** Allows scaling down to a specified fraction of the original size. (Example: a value of 0.5 will reduce the size by half.) Accepts a decimal value between 0 and 1.
-   * type: Number,
-   * default: null
+#### scaleRatio
+Allows scaling down to a specified fraction of the original size. (Example: a value of 0.5 will reduce the size by half.) Accepts a decimal value between 0 and 1.
+* type: Number,
+* default: null
 
-- **autoRotate**
+#### autoRotate
 A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen. **NB: Requires that the [exif-js](https://github.com/exif-js/exif-js) library is loaded.** If not, a warning is echoed to the console.
-   * type: Boolean,
-   * default: false
+* type: Boolean,
+* default: false
 
-- **preview**
+#### preview
 A boolean flag to toogle an img-tag displaying the uploaded image. When set to false no img-tag is displayed.
-   * type: Boolean,
-   * default: true
+* type: Boolean,
+* default: true
 
-- **outputFormat**
-Sets the desired format for the returned image. Available formats are 'string' (base64), verbose (object) or 'blob' (object). **NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
-   * type: String,
-   * default: 'string'
+#### outputFormat
+Sets the desired format for the returned image. Available formats are 'string' (base64), verbose (object), 'blob' (object) of 'file' (unmodified uploaded File object).
+**NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
+* type: String,
+* default: 'string'
 
-- **className**
+#### className
 Sets the desired class name for the input element
-   * type: String or Array
-   * default: 'fileinput'
+* type: String or Array
+* default: 'fileinput'
 
-- **capture**
+#### capture
 Sets an optional capture attribute (camera, user, environment) to the input element.
 The "camera" value (or no value) let's the browser decide which camera to use, while the "user" and "environment" values tell the browser to prefer the front and rear cameras, respectively.
-   * type: String
-   * default: empty (off)
+* type: String
+* default: empty (off)
 
-- **accept**
+#### accept
 Specifies the types of files that can be submitted through the file upload. The types can be valid file extension starting with the STOP character (e.g: ".gif, .jpg, .png") or wildcare file types (e.g. audio/*, video/*, image/*"). To specify more than one value, separate the values with a comma
-   * type: String
-   * default: 'image/*'
+* type: String
+* default: 'image/*'
 
-**doNotResize**Specifies filetypes that will not be resized. Accepts an array of image's extension. If only 1 extension, it can be provided directly as a string.
-     * @type String or Array
-      default: null
+#### doNotResize
+Specifies filetypes that will not be resized. Accepts an array of image's extension. If only 1 extension, it can be provided directly as a string.
+* type String or Array
+* default: null
 
-- **debug**
+#### debug
 How much to write to the console. 0 = silent. 1 = quiet. 2 = loud
-   * type: Number,
-   * default: 0
+* type: Number,
+* default: 0
 
 ### Events
 
-- **@input**
+#### @input
 Returns the processed image in requested outputformat. From this event you can add optional hooks.
 
 ```html
@@ -165,10 +170,10 @@ Returns the processed image in requested outputformat. From this event you can a
 
 ```
 
-- **@onUpload**
+#### @onUpload
 On start of upload.
 
-- **@onComplete**
+#### @onComplete
 On end of upload.
 
 
@@ -188,14 +193,12 @@ If loaded as module, npm handles all dependecies.
 ## Roadmap and todos
 * if wc works, read throught this and use demo example in readme
 * If we should bundle both lib and wc, turn off dist clean
-* Include banner in webpack build
 
 1. Progress report
 2. Support multiple files
 3. Implement completion callback
 4. Propper unit testing of events
 5. ~~Clean up scaffolding and project files~~
-
 
 
 
