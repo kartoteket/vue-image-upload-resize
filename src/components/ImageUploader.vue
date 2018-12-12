@@ -430,7 +430,6 @@ export default {
      * @param  {ImageData} srcCanvasData - Pixel data of source canvas
      * @param  {ImageData} destCanvasData - Pixel data of destionation canvas
      * @param  {int} scale - Resize scale (max width / original width)
-     * @returns {ImageData}  - bilenear Interpolated image pixel data
      * @author http://web.archive.org/web/20120123142531/http://www.philou.ch/js-bilinear-interpolation.html
      */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
