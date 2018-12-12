@@ -288,7 +288,7 @@ export default {
     /**
      * Performance orientation and scaling logic
      * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
-     * @param  {int} [orientation=0] - Exif-extracted orientation code
+     * @param  {int} [orientation = 1] - Exif-extracted orientation code
      */
     scaleImage(img, orientation = 1) {
       this.log('scaleImage() is called', 2)
@@ -416,7 +416,7 @@ export default {
       scaledCanvas.height = canvas.height * scale
 
       const srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
-      let destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
+      const destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
 
       this.applyBilinearInterpolation(srcImgData, destImgData, scale)
 
@@ -430,7 +430,6 @@ export default {
      * @param  {ImageData} srcCanvasData - Pixel data of source canvas
      * @param  {ImageData} destCanvasData - Pixel data of destionation canvas
      * @param  {int} scale - Resize scale (max width / original width)
-     * @returns {ImageData}  - bilenear Interpolated image pixel data
      * @author http://web.archive.org/web/20120123142531/http://www.philou.ch/js-bilinear-interpolation.html
      */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
@@ -531,9 +530,10 @@ export default {
           // @todo: cache and reuse exifdata if autoRotate is used
           EXIF.getData(this.currentFile, function() {
             data.exif = this.exifdata
-            // return data
+            return data
           })
         }
+
         return data
       }
 
