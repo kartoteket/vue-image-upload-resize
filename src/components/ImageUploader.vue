@@ -202,6 +202,13 @@ export default {
       currentFile: {},
     }
   },
+
+  computed: {
+    hasExifLibrary: function() {
+      return typeof EXIF !== 'undefined' && typeof EXIF.getData === 'function'
+    },
+  },
+
   methods: {
     /**
      * Get file from input
@@ -263,32 +270,17 @@ export default {
           img.onload = function() {
             that.log('img.onload() is triggered', 2)
 
-            // Rotate image first if required
-            if (that.autoRotate) {
-              if (typeof EXIF === 'undefined') {
-                console.warn('Missing EXIF library! exif-js.js must be loaded to use autoRotate')
-                console.warn('Continuing without rotation')
-                that.scaleImage(img)
-              } else {
-                that.log('ImageUploader: detecting image orientation...')
-
-                if (typeof EXIF.getData === 'function' && typeof EXIF.getTag === 'function') {
+            if (that.autoRotate && that.hasExifLibrary) {
                   EXIF.getData(img, function() {
                     const orientation = EXIF.getTag(this, 'Orientation')
                     that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
                     that.scaleImage(img, orientation)
                   })
                 } else {
-                  console.error("ImageUploader: can't read EXIF data, the Exif.js library not found")
                   that.scaleImage(img)
                 }
               }
-            } else {
-              that.log('No autoRotate')
-              that.scaleImage(img)
             }
-          }
-        }
         reader.readAsDataURL(file)
       }
     },
@@ -296,9 +288,9 @@ export default {
     /**
      * Performance orientation and scaling logic
      * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
-     * @param  {int} orientation - Exif-extracted orientation code
+     * @param  {int} [orientation = 1] - Exif-extracted orientation code
      */
-    scaleImage(img, orientation) {
+    scaleImage(img, orientation = 1) {
       this.log('scaleImage() is called', 2)
 
       let canvas = document.createElement('canvas')
@@ -308,14 +300,12 @@ export default {
       ctx.save()
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
+      if (orientation > 1) {
       const width = canvas.width
       const styleWidth = canvas.style.width
       const height = canvas.height
       const styleHeight = canvas.style.height
-      if (typeof orientation === 'undefined') {
-        orientation = 1
-      }
-      if (orientation) {
+
         if (orientation > 4) {
           canvas.width = height
           canvas.style.width = styleHeight
@@ -525,17 +515,23 @@ export default {
       }
 
       if (this.outputFormat === 'verbose') {
-        return {
+        const data = {
           dataUrl: imageData,
           name: this.currentFile.name,
           type: this.currentFile.type,
           lastModified: this.currentFile.lastModified,
           lastModifiedDate: this.currentFile.lastModifiedDate,
         }
+
+        if (this.hasExifLibrary) {
+          // @todo: cache and reuse exifdata if autoRotate is used
+          EXIF.getData(this.currentFile, function() {
+            data.exif = this.exifdata
+            return data
+          })
       }
 
-      if (this.outputFormat === 'file') {
-        return this.currentFile
+        return data
       }
 
       // simple base64 dataUrl string by default
