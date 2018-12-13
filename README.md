@@ -1,38 +1,39 @@
 # Vue Image Upload and Resize
 A Vue.js Plugin Component for client-side image upload with optional resizing and exif-based autorotate.
 
+This plugin was created for the use in a webapp scenario where we had a large number of end users uploading camera photos from their mobile devices on partly low end data plans. The primary purpose is therefor _client-side resizing_ and if needed exif-based auto-rotation. It can however also be use simply as a file upload component.
+
 Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of two optional dependencies: [Exif.js](https://github.com/exif-js/exif-js) (for autorotate)
 and [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
+## Demo
+[![Edit Vue Image Upload and Resize ](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/mqnow97omj?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
 
-## Usage
 
-
-### Install and import as npm module
+## Installation
+### yarn
+```bash
+yarn add vue-image-upload-resize
+```
+### npm
 ```bash
 npm install --save vue-image-upload-resize
 ```
+
+### Usage
+In script entry point
 ```js
-import { ImageUploader } from 'vue-image-upload-resize'
+import ImageUploader from 'vue-image-upload-resize'
+Vue.use(ImageUploader);
 ```
-### ... or load and register as global script
+## As global script
 ```html
 <script src="https://unpkg.com/vue-image-upload-resize"></script>
 ```
-The global script automatically registers as a global componenet. See public/demo.html for example use.
+The global script automatically registers as a global componenet. See [public/demo.html](https://github.com/kartoteket/vue-image-upload-resize/blob/master/public/demo.html) for example use.
 
-## Add as component
-```js
-export default {
-  (...)
-  components: {
-    ImageUploader
-  },
-  (...)
-}
-```
 
 ## Markup
 
@@ -177,26 +178,13 @@ On start of upload.
 On end of upload.
 
 
-
-## Optional dependencies
-If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries - exif.js and  canvas-to-blob.min.js - must be available. If the plugin is loaded with ```<script>```-tag in global scope, so must the relevant lilbraries:
-
-#### index.html
-
-```html
-<script src="js/exif.js" async defer></script>
-<script src="js/canvas-to-blob.min.js" async defer></script>
-```
-
-If loaded as module, npm handles all dependecies.
-
 ## Roadmap and todos
 1. Progress report
 2. Support multiple files
 3. Implement completion callback
 4. Propper unit testing of events
 5. ~~Clean up scaffolding and project files~~
-
+6. Exclude optional dependecies from package
 
 ## Project setup
 ```
