@@ -1,6 +1,6 @@
 {
   "name": "vue-image-upload-resize",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A simple Vue.js component for client-side image upload with resizing",
   "author": "Svale Fossåskaret <svale@3by5.no>",
   "scripts": {
