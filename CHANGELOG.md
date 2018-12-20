@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres (more or less) to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.3] - 2018-12-20
+### Fixed
+- Fixes missing binding on accept attribute (thanks @XeO3 )
+
 ## [2.0.2] - 2018-12-13
 ###  Added
 - [codebox.io demo](https://codesandbox.io/s/mqnow97omj?module=%2Fsrc%2Fcomponents%2FHelloWorld.vue)
