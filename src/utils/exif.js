@@ -26,8 +26,6 @@ THE SOFTWARE.
 
 var debug = false
 
-const EXIF = {}
-
 var ExifTags = {
   // version tags
   0x9000: 'ExifVersion', // EXIF version
@@ -347,12 +345,6 @@ var IptcFieldMap = {
   0x74: 'copyright',
   0x0f: 'category',
 }
-
-EXIF.Tags = ExifTags
-EXIF.TiffTags = TiffTags
-EXIF.GPSTags = GPSTags
-EXIF.IFD1Tags = IFD1Tags
-EXIF.StringValues = StringValues
 
 function imageHasData(img) {
   return !!img.exifdata
@@ -953,86 +945,86 @@ function xml2Object(xml) {
   }
 }
 
+const EXIF = {
+  Tags: ExifTags,
+  TiffTags: TiffTags,
+  GPSTags: GPSTags,
+  IFD1Tags: IFD1Tags,
+  StringValues: StringValues,
+  getData: function(img, callback) {
+    if (((self.Image && img instanceof self.Image) || (self.HTMLImageElement && img instanceof self.HTMLImageElement)) && !img.complete) return false
+    if (!imageHasData(img)) {
+      getImageData(img, callback)
+    } else {
+      if (callback) {
+        callback.call(img)
+      }
+    }
+    return true
+  },
+  getTag: function(img, tag) {
+    if (!imageHasData(img)) return
+    return img.exifdata[tag]
+  },
+  getIptcTag: function(img, tag) {
+    if (!imageHasData(img)) return
+    return img.iptcdata[tag]
+  },
+  getAllTags: function(img) {
+    if (!imageHasData(img)) return {}
+    var a,
+      data = img.exifdata,
+      tags = {}
+    for (a in data) {
+      if (data.hasOwnProperty(a)) {
+        tags[a] = data[a]
+      }
+    }
+    return tags
+  },
+  getAllIptcTags: function(img) {
+    if (!imageHasData(img)) return {}
+    var a,
+      data = img.iptcdata,
+      tags = {}
+    for (a in data) {
+      if (data.hasOwnProperty(a)) {
+        tags[a] = data[a]
+      }
+    }
+    return tags
+  },
+  pretty: function(img) {
+    if (!imageHasData(img)) return ''
+    var a,
+      data = img.exifdata,
+      strPretty = ''
+    for (a in data) {
+      if (data.hasOwnProperty(a)) {
+        if (typeof data[a] == 'object') {
+          if (data[a] instanceof Number) {
+            strPretty += a + ' : ' + data[a] + ' [' + data[a].numerator + '/' + data[a].denominator + ']\r\n'
+          } else {
+            strPretty += a + ' : [' + data[a].length + ' values]\r\n'
+          }
+        } else {
+          strPretty += a + ' : ' + data[a] + '\r\n'
+        }
+      }
+    }
+    return strPretty
+  },
+  readFromBinaryFile: function(file) {
+    return findEXIFinJPEG(file)
+  },
+}
+
 EXIF.enableXmp = function() {
   EXIF.isXmpEnabled = true
 }
 
 EXIF.disableXmp = function() {
   EXIF.isXmpEnabled = false
-}
-
-EXIF.getData = function(img, callback) {
-  if (((self.Image && img instanceof self.Image) || (self.HTMLImageElement && img instanceof self.HTMLImageElement)) && !img.complete) return false
-
-  if (!imageHasData(img)) {
-    getImageData(img, callback)
-  } else {
-    if (callback) {
-      callback.call(img)
-    }
-  }
-  return true
-}
-
-EXIF.getTag = function(img, tag) {
-  if (!imageHasData(img)) return
-  return img.exifdata[tag]
-}
-
-EXIF.getIptcTag = function(img, tag) {
-  if (!imageHasData(img)) return
-  return img.iptcdata[tag]
-}
-
-EXIF.getAllTags = function(img) {
-  if (!imageHasData(img)) return {}
-  var a,
-    data = img.exifdata,
-    tags = {}
-  for (a in data) {
-    if (data.hasOwnProperty(a)) {
-      tags[a] = data[a]
-    }
-  }
-  return tags
-}
-
-EXIF.getAllIptcTags = function(img) {
-  if (!imageHasData(img)) return {}
-  var a,
-    data = img.iptcdata,
-    tags = {}
-  for (a in data) {
-    if (data.hasOwnProperty(a)) {
-      tags[a] = data[a]
-    }
-  }
-  return tags
-}
-
-EXIF.pretty = function(img) {
-  if (!imageHasData(img)) return ''
-  var a,
-    data = img.exifdata,
-    strPretty = ''
-  for (a in data) {
-    if (data.hasOwnProperty(a)) {
-      if (typeof data[a] == 'object') {
-        if (data[a] instanceof Number) {
-          strPretty += a + ' : ' + data[a] + ' [' + data[a].numerator + '/' + data[a].denominator + ']\r\n'
-        } else {
-          strPretty += a + ' : [' + data[a].length + ' values]\r\n'
-        }
-      } else {
-        strPretty += a + ' : ' + data[a] + '\r\n'
-      }
-    }
-  }
-  return strPretty
-}
-
-EXIF.readFromBinaryFile = function(file) {
-  return findEXIFinJPEG(file)
 }
 
 export default EXIF
