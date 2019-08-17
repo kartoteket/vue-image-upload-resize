@@ -14,7 +14,6 @@
   "dependencies": {
     "blueimp-canvas-to-blob": "^3.14.0",
     "eslint-plugin-prettier": "^3.1.0",
-    "exif-js": "^2.3.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
