@@ -8,6 +8,9 @@ and this project adheres (more or less) to [Semantic Versioning](https://semver.
 ### Added
 - New inline exif-reader utility based on exif.js, ref [issue #15](https://github.com/kartoteket/vue-image-upload-resize/issues/15)
 
+### Changed
+- Updated dependecies
+
 ### Removed
 - exif-js-js dependecy, ref [issue #15](https://github.com/kartoteket/vue-image-upload-resize/issues/15)
 
