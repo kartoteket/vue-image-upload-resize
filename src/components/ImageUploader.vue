@@ -41,7 +41,7 @@
  **/
 
 /* Dependecies */
-import EXIF from 'exif-js'
+import EXIF from '../utils/exif.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
