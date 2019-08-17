@@ -1,8 +1,7 @@
 # Vue Image Upload and Resize
 A Vue.js Plugin Component for client-side image upload with optional resizing and exif-based autorotate.
 
-Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of two optional dependencies: [Exif.js](https://github.com/exif-js/exif-js) (for autorotate)
-and [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
+Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of an optional dependency [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
@@ -110,7 +109,7 @@ Allows scaling down to a specified fraction of the original size. (Example: a va
 * default: null
 
 #### autoRotate
-A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen. **NB: Requires that the [exif-js](https://github.com/exif-js/exif-js) library is loaded.** If not, a warning is echoed to the console.
+A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen. This functionality is based on the library [exif-js] https://github.com/exif-js/exif-js.
 * type: Boolean,
 * default: false
 
@@ -179,12 +178,11 @@ On end of upload.
 
 
 ## Optional dependencies
-If ```autoRotate=true``` and/or ```outformat="blob"``` the required librabries - exif.js and  canvas-to-blob.min.js - must be available. If the plugin is loaded with ```<script>```-tag in global scope, so must the relevant lilbraries:
+If ```outformat="blob"``` the required libraby canvas-to-blob.min.js must be available. If the plugin is loaded with ```<script>```-tag in global scope, so must the relevant lilbrary:
 
 #### index.html
 
 ```html
-<script src="js/exif.js" async defer></script>
 <script src="js/canvas-to-blob.min.js" async defer></script>
 ```
 
