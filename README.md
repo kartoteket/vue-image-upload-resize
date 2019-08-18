@@ -119,8 +119,13 @@ A boolean flag to toogle an img-tag displaying the uploaded image. When set to f
 * default: true
 
 #### outputFormat
-Sets the desired format for the returned image. Available formats are 'string' (base64), verbose (object), 'blob' (object) of 'file' (unmodified uploaded File object).
-**NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
+Sets the desired format for the returned image. Available formats are 
+- **string**  - image as base64 string
+- **info** - object with image info only [name, type, newWidth, newHeight, orgWidth, orgHeight, aspectRatio (as Float), modifiedTimestamp, modifiedDate,]
+- **verbose** - object with imageData (base64), image info and exif data if available
+- **blob** - image as A Blob object. **NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
+- **file**  - unmodified uploaded File object
+
 * type: String,
 * default: 'string'
 
