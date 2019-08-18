@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres (more or less) to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+___
+## [2.1.0]  - 2019-08-18
+### Added
+- New inline exif-reader utility based on exif.js, ref [issue #15](https://github.com/kartoteket/vue-image-upload-resize/issues/15) 
+- New output format "info" that includes details on image dimensions, ref [issue 19](https://github.com/kartoteket/vue-image-upload-resize/issues/19)
+
+### Changed
+- Updated dependecies.
+- Updated Readme.
+- Re-organized 'verbose' output to include dataUrl, the new info output and and exif data.
+
+### Removed
+- exif-js-js dependecy, ref [issue #15](https://github.com/kartoteket/vue-image-upload-resize/issues/15)
 
 ## [2.0.4] - 2019-01-23
 ### Fixed
@@ -24,6 +37,7 @@ and this project adheres (more or less) to [Semantic Versioning](https://semver.
 - Fixed incorrect paths in package.json
 
 ## [2.0.0] - 2018-12-12
+
 ### Added
 - This CHANGELOG file
 - New prop/attribute 'accept' to open for use with other filetypes than just 'image/*' (thank you [@Pitouli](https://github.com/Pitouli))

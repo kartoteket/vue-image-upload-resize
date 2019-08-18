@@ -41,7 +41,7 @@
  **/
 
 /* Dependecies */
-import EXIF from 'exif-js'
+import EXIF from '../utils/exif.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
@@ -132,7 +132,7 @@ export default {
 
     /**
      * Sets the desired format for the returned image. Available formats are
-     * 'string' (base64), 'verbose' (object), 'blob' (object), 'file' (unmodified File object)
+     * 'string' (base64), 'verbose' (object), 'blob' (object), 'info' (object), 'file' (unmodified File object)
      * @default {string}
      * @type {String}
      */
@@ -200,10 +200,12 @@ export default {
     return {
       imagePreview: null,
       currentFile: {},
+      dimensions: {},
     }
   },
 
   computed: {
+    //@todo: obsolete
     hasExifLibrary: function() {
       return typeof EXIF !== 'undefined' && typeof EXIF.getData === 'function'
     },
@@ -362,6 +364,12 @@ export default {
         mWidth = Math.min(mWidth, Math.floor(this.scaleRatio * canvas.width))
       }
 
+      // store dimensions
+      this.dimensions.orgWidth = canvas.width
+      this.dimensions.orgHeight = canvas.height
+      this.dimensions.width = mWidth
+      this.dimensions.height = Math.floor(mWidth / ratio)
+
       this.log('ImageUploader: original image size = ' + canvas.width + ' X ' + canvas.height)
       this.log('ImageUploader: scaled image size = ' + mWidth + ' X ' + Math.floor(mWidth / ratio))
 
@@ -517,24 +525,37 @@ export default {
         return dataURLtoBlob(imageData)
       }
 
+      const info = {
+        name: this.currentFile.name,
+        type: this.currentFile.type,
+        // size: this.currentFile.size,
+        newWidth: this.dimensions.width,
+        newHeight: this.dimensions.height,
+        orgWidth: this.dimensions.orgWidth,
+        orgHeight: this.dimensions.orgHeight,
+        aspectRatio: Math.round((this.dimensions.width / this.dimensions.height) * 100) / 100, //as Float
+        modifiedTimestamp: this.currentFile.lastModified,
+        modifiedDate: this.currentFile.lastModifiedDate,
+      }
+
+      // return just info
+      if (this.outputFormat === 'info') {
+        return info
+      }
+
       if (this.outputFormat === 'verbose') {
         const data = {
           dataUrl: imageData,
-          name: this.currentFile.name,
-          type: this.currentFile.type,
-          lastModified: this.currentFile.lastModified,
-          lastModifiedDate: this.currentFile.lastModifiedDate,
+          info,
         }
 
-        if (this.hasExifLibrary) {
-          // @todo: cache and reuse exifdata if autoRotate is used
-          EXIF.getData(this.currentFile, function() {
-            if (Object.keys(this.exifdata).length > 0) {
-              data.exif = this.exifdata
-              return data
-            }
-          })
-        }
+        // @todo: cache and reuse exifdata if autoRotate is used
+        EXIF.getData(this.currentFile, function() {
+          if (Object.keys(this.exifdata).length > 0) {
+            data.exif = this.exifdata
+            return data
+          }
+        })
 
         return data
       }

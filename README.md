@@ -3,8 +3,7 @@ A Vue.js Plugin Component for client-side image upload with optional resizing an
 
 This plugin was created for the use in a webapp scenario where we had a large number of end users uploading camera photos from their mobile devices on partly low end data plans. The primary purpose is therefor _client-side resizing_ and if needed exif-based auto-rotation. It can however also be use simply as a file upload component.
 
-Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of two optional dependencies: [Exif.js](https://github.com/exif-js/exif-js) (for autorotate)
-and [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
+Based on [ImageUploader] (https://github.com/rossturner/HTML5-ImageUploader) by Ross Turner. The plugin makes use of an optional dependency [JavaScript Canvas to Blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) (for blob output).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
@@ -85,12 +84,12 @@ The ID for the file input, required if more than one instance should be used on 
 * type String
 
 #### maxWidth
-An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
+An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down.
 * type: Number
 * default: 1024
 
 #### maxHeight
-An integer in pixels for the maximum height allowed for uploaded images, selected images with a greater height than this value will be scaled down before upload.
+An integer in pixels for the maximum height allowed for uploaded images, selected images with a greater height than this value will be scaled down.
 * type: Number,
 * default: 1024
 
@@ -111,7 +110,7 @@ Allows scaling down to a specified fraction of the original size. (Example: a va
 * default: null
 
 #### autoRotate
-A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen. **NB: Requires that the [exif-js](https://github.com/exif-js/exif-js) library is loaded.** If not, a warning is echoed to the console.
+A boolean flag, if true then EXIF information from the image is parsed and the image is rotated correctly before upload. If false, then no processing is performed, and unwanted image flipping can happen. This functionality is based on the library [exif-js] https://github.com/exif-js/exif-js.
 * type: Boolean,
 * default: false
 
@@ -121,8 +120,13 @@ A boolean flag to toogle an img-tag displaying the uploaded image. When set to f
 * default: true
 
 #### outputFormat
-Sets the desired format for the returned image. Available formats are 'string' (base64), verbose (object), 'blob' (object) of 'file' (unmodified uploaded File object).
-**NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
+Sets the desired format for the returned image. Available formats are 
+- **string**  - image as base64 string.
+- **info** - object with image info only [name, type, newWidth, newHeight, orgWidth, orgHeight, aspectRatio (as Float), modifiedTimestamp, modifiedDate].
+- **verbose** - object with 'dataUrl' (image as base64 string), 'info' (image info) and 'exif' data if available.
+- **blob** - image as A Blob object. **NB: The *'blob'* format requires that the [blueimp-canvas-to-blob](https://github.com/blueimp/JavaScript-Canvas-to-Blob) library is loaded.** If not, a warning is echoed to the console.
+- **file**  - unmodified uploaded File object.
+
 * type: String,
 * default: 'string'
 
@@ -177,6 +181,18 @@ On start of upload.
 #### @onComplete
 On end of upload.
 
+
+
+## Optional dependencies
+If ```outformat="blob"``` the required libraby canvas-to-blob.min.js must be available. If the plugin is loaded with ```<script>```-tag in global scope, so must the relevant lilbrary:
+
+#### index.html
+
+```html
+<script src="js/canvas-to-blob.min.js" async defer></script>
+```
+
+If loaded as module, npm handles all dependecies.
 
 ## Roadmap and todos
 1. Progress report
