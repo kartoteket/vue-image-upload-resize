@@ -83,12 +83,12 @@ The ID for the file input, required if more than one instance should be used on 
 * type String
 
 #### maxWidth
-An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down before upload.
+An integer in pixels for the maximum width allowed for uploaded images, selected images with a greater width than this value will be scaled down.
 * type: Number
 * default: 1024
 
 #### maxHeight
-An integer in pixels for the maximum height allowed for uploaded images, selected images with a greater height than this value will be scaled down before upload.
+An integer in pixels for the maximum height allowed for uploaded images, selected images with a greater height than this value will be scaled down.
 * type: Number,
 * default: 1024
 
