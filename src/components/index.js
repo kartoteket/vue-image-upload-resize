@@ -1,5 +1,5 @@
 /*!
- * vue-image-upload-resize v2.1.0
+ * vue-image-upload-resize
  * Based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader)
  * Adapted by (c) 2018 Svale Fossåskaret (http://kartoteket.as/team/svale.html / @Fossesvale)
  * @license MIT.
