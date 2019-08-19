@@ -46,7 +46,7 @@ The global script automatically registers as a global componenet. See [public/de
     outputFormat="verbose"
     :preview=false
     :className="['fileinput', { 'fileinput--loaded' : hasImage }]"
-    capture="environment"
+    :capture="false"
     accept="video/*,image/*"
     doNotResize="['gif', 'svg']"
     @input="setImage"
@@ -136,10 +136,10 @@ Sets the desired class name for the input element
 * default: 'fileinput'
 
 #### capture
-Sets an optional capture attribute (camera, user, environment) to the input element.
-The "camera" value (or no value) let's the browser decide which camera to use, while the "user" and "environment" values tell the browser to prefer the front and rear cameras, respectively.
+Sets an optional capture attribute (camera, user, environment) to the input element (only for mobile devices).
+The "camera" value let's the browser decide which camera to use, while the "user" and "environment" values tell the browser to prefer the front and rear cameras, respectively. To also access the device gallery capture must be set to 'false'
 * type: String
-* default: empty (off)
+* default: false (off)
 
 #### accept
 Specifies the types of files that can be submitted through the file upload. The types can be valid file extension starting with the STOP character (e.g: ".gif, .jpg, .png") or wildcare file types (e.g. audio/*, video/*, image/*"). To specify more than one value, separate the values with a comma

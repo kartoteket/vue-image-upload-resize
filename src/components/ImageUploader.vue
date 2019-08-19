@@ -152,13 +152,13 @@ export default {
     },
 
     /**
-     * Sets an optional capture attribute. (camera, user, environment)
+     * Sets an optional capture attribute. (false, camera, user, environment)
      * @default empty
-     * @type {String}
+     * @type [String or Boolean]
      */
     capture: {
-      type: [String],
-      default: null,
+      type: [String, Boolean],
+      default: false,
     },
 
     /**

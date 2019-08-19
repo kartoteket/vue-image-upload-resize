@@ -3,7 +3,7 @@
     <image-uploader
       :preview="true"
       :className="['fileinput', { 'fileinput--loaded': hasImage }]"
-      capture="environment"
+      :capture="false"
       :debug="1"
       doNotResize="gif"
       :autoRotate="true"
