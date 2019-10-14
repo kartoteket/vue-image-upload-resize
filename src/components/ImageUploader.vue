@@ -43,6 +43,7 @@
 /* Dependecies */
 import EXIF from '../utils/exif.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
+import piexifjs from 'piexifjs'
 
 export default {
   name: 'image-uploader',
@@ -216,11 +217,11 @@ export default {
      * Get file from input
      * @param  {object} event
      */
-    uploadFile(e) {
+    async uploadFile(e) {
       const file = e.target.files && e.target.files.length ? e.target.files[0] : null
       if (file) {
         this.emitLoad()
-        this.handleFile(file)
+        await this.handleFile(file)
       }
     },
 
@@ -247,7 +248,7 @@ export default {
      * @param  {File}     file The current original uploaded file
      * @return {}         nada (yet)
      */
-    handleFile(file) {
+    async handleFile(file) {
       this.log('handleFile() is called with file:', 2, file)
       this.currentFile = file
 
@@ -265,21 +266,21 @@ export default {
         const img = document.createElement('img')
         const reader = new window.FileReader()
 
-        reader.onload = function(e) {
+        reader.onload = async function(e) {
           that.log('reader.onload() is triggered', 2)
 
           img.src = e.target.result
-          img.onload = function() {
+          img.onload = async function() {
             that.log('img.onload() is triggered', 2)
 
             if (that.autoRotate && that.hasExifLibrary) {
-              EXIF.getData(img, function() {
+              EXIF.getData(img, async function() {
                 const orientation = EXIF.getTag(this, 'Orientation')
                 that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                that.scaleImage(img, orientation)
+                await that.scaleImage(img, orientation)
               })
             } else {
-              that.scaleImage(img)
+              await that.scaleImage(img)
             }
           }
         }
@@ -292,7 +293,7 @@ export default {
      * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
      * @param  {int} [orientation = 1] - Exif-extracted orientation code
      */
-    scaleImage(img, orientation = 1) {
+    async scaleImage(img, orientation = 1) {
       this.log('scaleImage() is called', 2)
 
       let canvas = document.createElement('canvas')
@@ -405,7 +406,7 @@ export default {
 
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
-      this.emitEvent(this.formatOutput(imageData))
+      this.emitEvent(await this.formatOutput(imageData))
 
       this.emitComplete()
     },
@@ -509,8 +510,10 @@ export default {
      *                                    blob or
      *                                    file
      */
-    formatOutput(imageData) {
+    async formatOutput(imageData) {
       this.log('ImageUploader: outputFormat: ' + this.outputFormat)
+
+      imageData = await this.copyExistingExifData(imageData)
 
       if (this.outputFormat === 'file') {
         return this.currentFile
@@ -562,6 +565,24 @@ export default {
 
       // simple base64 dataUrl string by default
       return imageData
+    },
+
+    /**
+     * Copy EXIF information from source file into the resized image.
+     * @param {string} imageData - the base64 encoded resized image
+     * @return {string} the base64 encoded resized image with the copied EXIF information
+     */
+    async copyExistingExifData(imageData) {
+      const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+      const currentFileBase64 = await toBase64(this.currentFile)
+      const existingExif = piexifjs.load(currentFileBase64)
+      const exifBinary = piexifjs.dump(existingExif)
+      return piexifjs.insert(exifBinary, imageData)
     },
 
     /**
