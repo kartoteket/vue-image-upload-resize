@@ -42,6 +42,8 @@
 
 /* Dependecies */
 import EXIF from '../utils/exif.js'
+import { createScaledImage, scaleImage } from '../utils/images.js';
+import { getHalfScaleCanvas, scaleCanvasWithAlgorithm } from '../utils/canvas.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
@@ -242,12 +244,12 @@ export default {
       this.$emit('onComplete')
     },
 
-    /**
+  /**
      * Handels the file manipulation on upload
      * @param  {File}     file The current original uploaded file
      * @return {}         nada (yet)
      */
-    handleFile(file) {
+    async handleFile(file) {
       this.log('handleFile() is called with file:', 2, file)
       this.currentFile = file
 
@@ -261,244 +263,27 @@ export default {
         this.emitEvent(file) // does NOT respect the output format prop
         this.emitComplete()
       } else {
-        const that = this
-        const img = document.createElement('img')
-        const reader = new window.FileReader()
-
-        reader.onload = function(e) {
-          that.log('reader.onload() is triggered', 2)
-
-          img.src = e.target.result
-          img.onload = function() {
-            that.log('img.onload() is triggered', 2)
-
-            if (that.autoRotate && that.hasExifLibrary) {
-              EXIF.getData(img, function() {
-                const orientation = EXIF.getTag(this, 'Orientation')
-                that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                that.scaleImage(img, orientation)
-              })
-            } else {
-              that.scaleImage(img)
-            }
-          }
+        const options = {
+          autoRotate: this.autoRotate,
+          hasExifLibrary: this.hasExifLibrary,
+          maxWidth: this.maxWidth,
+          maxHeight: this.maxHeight,
+          maxSize: this.maxSize,
+          scaleRatio: this.scaleRatio,
+          dimensions: this.dimensions,
+          quality: this.quality,
         }
-        reader.readAsDataURL(file)
-      }
-    },
-
-    /**
-     * Performance orientation and scaling logic
-     * @param  {HTMLElement} img -  A document img element containing the uploaded file as a base764 encoded string as source
-     * @param  {int} [orientation = 1] - Exif-extracted orientation code
-     */
-    scaleImage(img, orientation = 1) {
-      this.log('scaleImage() is called', 2)
-
-      let canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
-      const ctx = canvas.getContext('2d')
-      ctx.save()
-
-      // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
-      if (orientation > 1) {
-        const width = canvas.width
-        const styleWidth = canvas.style.width
-        const height = canvas.height
-        const styleHeight = canvas.style.height
-
-        if (orientation > 4) {
-          canvas.width = height
-          canvas.style.width = styleHeight
-          canvas.height = width
-          canvas.style.height = styleWidth
+          // imagePreview: this.imagePreview,
+          // onScale: this.onScale,
+        const { img, orientation } = await createScaledImage(file, options)
+        const imageData = scaleImage(img, file, orientation, options)
+        if (this.preview) {
+          this.imagePreview = imageData;
         }
-        switch (orientation) {
-          case 2:
-            ctx.translate(width, 0)
-            ctx.scale(-1, 1)
-            break
-          case 3:
-            ctx.translate(width, height)
-            ctx.rotate(Math.PI)
-            break
-          case 4:
-            ctx.translate(0, height)
-            ctx.scale(1, -1)
-            break
-          case 5:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.scale(1, -1)
-            break
-          case 6:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.translate(0, -height)
-            break
-          case 7:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.translate(width, -height)
-            ctx.scale(-1, 1)
-            break
-          case 8:
-            ctx.rotate(-0.5 * Math.PI)
-            ctx.translate(-width, 0)
-            break
-        }
+
+        this.emitEvent(this.formatOutput(imageData))
+        this.emitComplete()
       }
-      ctx.drawImage(img, 0, 0)
-      ctx.restore()
-
-      // Let's find the max available width for scaled image
-      const ratio = canvas.width / canvas.height
-      let mWidth = Math.min(this.maxWidth, ratio * this.maxHeight)
-
-      // suggested re-write by https://github.com/ryancramerdesign
-      // https://github.com/rossturner/HTML5-ImageUploader/issues/13
-      if (this.maxSize > 0 && this.maxSize < (canvas.width * canvas.height) / 1000000) {
-        const mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000)
-        mWidth = mWidth > 0 ? Math.min(mWidth, mSize) : mSize
-      }
-
-      if (this.scaleRatio) {
-        mWidth = Math.min(mWidth, Math.floor(this.scaleRatio * canvas.width))
-      }
-
-      // store dimensions
-      this.dimensions.orgWidth = canvas.width
-      this.dimensions.orgHeight = canvas.height
-      this.dimensions.width = mWidth
-      this.dimensions.height = Math.floor(mWidth / ratio)
-
-      this.log('ImageUploader: original image size = ' + canvas.width + ' X ' + canvas.height)
-      this.log('ImageUploader: scaled image size = ' + mWidth + ' X ' + Math.floor(mWidth / ratio))
-
-      if (mWidth <= 0) {
-        mWidth = 1
-        console.warning('ImageUploader: image size is too small')
-      }
-
-      // simple resize with a 2:1 ratio
-      while (canvas.width >= 2 * mWidth) {
-        canvas = this.getHalfScaleCanvas(canvas)
-      }
-
-      // When factor less than 2:1 remains, finish up with alogorithm
-      if (canvas.width > mWidth) {
-        canvas = this.scaleCanvasWithAlgorithm(canvas, mWidth)
-      }
-
-      // suggested re-write by https://github.com/ryancramerdesign
-      // https://github.com/rossturner/HTML5-ImageUploader/issues/13
-      const quality = this.currentFile.type === 'image/jpeg' ? this.quality : 1.0
-      const imageData = canvas.toDataURL(this.currentFile.type, quality)
-      if (typeof this.onScale === 'function') {
-        this.onScale(imageData)
-      }
-
-      this.log('New ImageData is ready', 2)
-
-      // Display preview of the new image
-      if (this.preview) {
-        this.imagePreview = imageData
-      }
-
-      // Return the new image
-      // this.emitEvent(this.currentFile) // DEBUG
-      this.emitEvent(this.formatOutput(imageData))
-
-      this.emitComplete()
-    },
-
-    /**
-     * Scale Canvas. Scales the
-     * @param {HTMLElement} canvas - canvas element before finale resize
-     * @param {int} maxWidth - max image width
-     * @returns {HTMLElement} - canvas resized to scale
-     */
-    scaleCanvasWithAlgorithm(canvas, maxWidth) {
-      const scaledCanvas = document.createElement('canvas')
-      const scale = maxWidth / canvas.width
-
-      scaledCanvas.width = canvas.width * scale
-      scaledCanvas.height = canvas.height * scale
-
-      const srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
-      const destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
-
-      this.applyBilinearInterpolation(srcImgData, destImgData, scale)
-
-      scaledCanvas.getContext('2d').putImageData(destImgData, 0, 0)
-
-      return scaledCanvas
-    },
-
-    /**
-     * Interpolation
-     * @param  {ImageData} srcCanvasData - Pixel data of source canvas
-     * @param  {ImageData} destCanvasData - Pixel data of destionation canvas
-     * @param  {int} scale - Resize scale (max width / original width)
-     * @author http://web.archive.org/web/20120123142531/http://www.philou.ch/js-bilinear-interpolation.html
-     */
-    applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
-      function inner(f00, f10, f01, f11, x, y) {
-        const un_x = 1.0 - x
-        const un_y = 1.0 - y
-        return f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y
-      }
-      let i, j
-      let iyv, iy0, iy1, ixv, ix0, ix1
-      let idxD, idxS00, idxS10, idxS01, idxS11
-      let dx, dy
-      let r, g, b, a
-      for (i = 0; i < destCanvasData.height; ++i) {
-        iyv = i / scale
-        iy0 = Math.floor(iyv)
-        // Math.ceil can go over bounds
-        iy1 = Math.ceil(iyv) > srcCanvasData.height - 1 ? srcCanvasData.height - 1 : Math.ceil(iyv)
-        for (j = 0; j < destCanvasData.width; ++j) {
-          ixv = j / scale
-          ix0 = Math.floor(ixv)
-          // Math.ceil can go over bounds
-          ix1 = Math.ceil(ixv) > srcCanvasData.width - 1 ? srcCanvasData.width - 1 : Math.ceil(ixv)
-          idxD = (j + destCanvasData.width * i) * 4
-          // matrix to vector indices
-          idxS00 = (ix0 + srcCanvasData.width * iy0) * 4
-          idxS10 = (ix1 + srcCanvasData.width * iy0) * 4
-          idxS01 = (ix0 + srcCanvasData.width * iy1) * 4
-          idxS11 = (ix1 + srcCanvasData.width * iy1) * 4
-          // overall coordinates to unit square
-          dx = ixv - ix0
-          dy = iyv - iy0
-          // I let the r, g, b, a on purpose for debugging
-          r = inner(srcCanvasData.data[idxS00], srcCanvasData.data[idxS10], srcCanvasData.data[idxS01], srcCanvasData.data[idxS11], dx, dy)
-          destCanvasData.data[idxD] = r
-
-          g = inner(srcCanvasData.data[idxS00 + 1], srcCanvasData.data[idxS10 + 1], srcCanvasData.data[idxS01 + 1], srcCanvasData.data[idxS11 + 1], dx, dy)
-          destCanvasData.data[idxD + 1] = g
-
-          b = inner(srcCanvasData.data[idxS00 + 2], srcCanvasData.data[idxS10 + 2], srcCanvasData.data[idxS01 + 2], srcCanvasData.data[idxS11 + 2], dx, dy)
-          destCanvasData.data[idxD + 2] = b
-
-          a = inner(srcCanvasData.data[idxS00 + 3], srcCanvasData.data[idxS10 + 3], srcCanvasData.data[idxS01 + 3], srcCanvasData.data[idxS11 + 3], dx, dy)
-          destCanvasData.data[idxD + 3] = a
-        }
-      }
-    },
-
-    /**
-     * getHalfScaleCanvas - return a canvas divided by 2
-     * @param  {HTMLElement} canvas - input document canvas element
-     * @returns  {HTMLElement} half of input canvas
-     */
-    getHalfScaleCanvas(canvas) {
-      const halfCanvas = document.createElement('canvas')
-      halfCanvas.width = canvas.width / 2
-      halfCanvas.height = canvas.height / 2
-
-      halfCanvas.getContext('2d').drawImage(canvas, 0, 0, halfCanvas.width, halfCanvas.height)
-
-      return halfCanvas
     },
 
     /**
@@ -583,6 +368,7 @@ export default {
   },
 
   created() {
+    window.debugLevel = 2
     this.log('Initialised ImageUploader')
   },
 }
