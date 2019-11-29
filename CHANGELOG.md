@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres (more or less) to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ___
+## [2.1.2]  - 2019-11-29
+### Added
+- Aded a section on use with nuxt.js (thanks @atymic )
+### Changed
+- Update eslint-utils  to 1.4.3
+
+___
 ## [2.1.1]  - 2019-08-19
 ### Changed
 - Changed default value of capture property to 'false' to access both camera and gallery on mobile devices, ref  [issue #17](https://github.com/kartoteket/vue-image-upload-resize/issues/17
