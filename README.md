@@ -27,6 +27,50 @@ In script entry point
 import ImageUploader from 'vue-image-upload-resize'
 Vue.use(ImageUploader);
 ```
+
+#### Using with Nuxt.js
+
+Currently the componenet is tied to the `window` object, so it can't be server side rendered.
+To get around this you need to install the componenet as a client side plugin.
+
+<details><summary>Instructions</summary>
+<p>
+
+1) Create a new file: `plugins/vue-image-upload.js`, and add the following code:
+```js
+import Vue from 'vue'
+import ImageUploader from 'vue-image-upload-resize'
+
+Vue.use(ImageUploader)
+```
+
+2) In your `nuxt.config.js`, add the [client plugin](https://nuxtjs.org/api/configuration-plugins):
+
+```js
+export default {
+  // ... other config
+  plugins: [
+    { src: '~/plugins/vue-image-upload.js', mode: 'client' },
+  ]
+}
+```
+
+3) When you use the componenent inside a page, make sure to wrap it in `<client-only>` tags (`<no-ssr>` in v < 2.9.0, [docs](https://nuxtjs.org/api/components-client-only/)).
+```html
+<template>
+  <client-only>
+    <image-uploader
+      :debug="1"
+    ></image-uploader>
+ </client-only>
+</template>
+```
+
+</p>
+</details>
+
+
+
 ## As global script
 ```html
 <script src="https://unpkg.com/vue-image-upload-resize"></script>
