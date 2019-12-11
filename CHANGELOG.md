@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres (more or less) to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ___
+## [2.2]  - 2019-12-11
+### Changed
+- Changed verbose output object to allways return an exif property (which is `null` if no exifdata)
+- Updated all non-major dependencies
+
 ## [2.1.2]  - 2019-11-29
 ### Added
 - Aded a section on use with nuxt.js (thanks @atymic )

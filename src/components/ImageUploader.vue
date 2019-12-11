@@ -9,10 +9,9 @@
 /**
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
  *
- * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader).
+ * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader) and
+ * exif.js (https://github.com/exif-js/exif-js) for JPEG autoRotate functions
  * Adapted for Vue by Svale Fossåskaret / Kartoteket with some modifications.
- *
- * Requires exif.js 2.3.0 (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
  *
  *
  * TODO Items:
@@ -40,7 +39,6 @@
  * SOFTWARE.
  **/
 
-/* Dependecies */
 import EXIF from '../utils/exif.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
@@ -201,14 +199,8 @@ export default {
       imagePreview: null,
       currentFile: {},
       dimensions: {},
+      exifData: {},
     }
-  },
-
-  computed: {
-    //@todo: obsolete
-    hasExifLibrary: function() {
-      return typeof EXIF !== 'undefined' && typeof EXIF.getData === 'function'
-    },
   },
 
   methods: {
@@ -272,15 +264,15 @@ export default {
           img.onload = function() {
             that.log('img.onload() is triggered', 2)
 
-            if (that.autoRotate && that.hasExifLibrary) {
-              EXIF.getData(img, function() {
-                const orientation = EXIF.getTag(this, 'Orientation')
-                that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                that.scaleImage(img, orientation)
-              })
-            } else {
-              that.scaleImage(img)
-            }
+            // this extracts exifdata if available. Returns an empty object if not
+            EXIF.getData(img, function() {
+              that.exifData = this.exifdata
+              if (Object.keys(that.exifData).length === 0) {
+                that.log('ImageUploader: exif data found and extracted', 2)
+              }
+            })
+
+            that.scaleImage(img, that.exifData.Orientation)
           }
         }
         reader.readAsDataURL(file)
@@ -302,7 +294,8 @@ export default {
       ctx.save()
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
-      if (orientation > 1) {
+      if (this.autoRotate && orientation > 1) {
+        this.log('ImageUploader: rotating image as per EXIF orientation tag = ' + orientation)
         const width = canvas.width
         const styleWidth = canvas.style.width
         const height = canvas.height
@@ -547,16 +540,8 @@ export default {
         const data = {
           dataUrl: imageData,
           info,
+          exif: Object.keys(this.exifData).length > 0 ? this.exifData : null,
         }
-
-        // @todo: cache and reuse exifdata if autoRotate is used
-        EXIF.getData(this.currentFile, function() {
-          if (Object.keys(this.exifdata).length > 0) {
-            data.exif = this.exifdata
-            return data
-          }
-        })
-
         return data
       }
 
