@@ -9,10 +9,9 @@
 /**
  * vue-ImageUploader: a to-the-point vue-component for client-side image upload with resizing of images (JPG, PNG, GIF)
  *
- * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader).
+ * Code based on ImageUploader (c) Ross Turner (https://github.com/rossturner/HTML5-ImageUploader) and
+ * exif.js (https://github.com/exif-js/exif-js) for JPEG autoRotate functions
  * Adapted for Vue by Svale Fossåskaret / Kartoteket with some modifications.
- *
- * Requires exif.js 2.3.0 (https://github.com/exif-js/exif-js) for JPEG autoRotate functions.
  *
  *
  * TODO Items:
@@ -40,7 +39,6 @@
  * SOFTWARE.
  **/
 
-/* Dependecies */
 import EXIF from '../utils/exif.js'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
@@ -204,13 +202,6 @@ export default {
     }
   },
 
-  computed: {
-    //@todo: obsolete
-    hasExifLibrary: function() {
-      return typeof EXIF !== 'undefined' && typeof EXIF.getData === 'function'
-    },
-  },
-
   methods: {
     /**
      * Get file from input
@@ -272,7 +263,7 @@ export default {
           img.onload = function() {
             that.log('img.onload() is triggered', 2)
 
-            if (that.autoRotate && that.hasExifLibrary) {
+            if (that.autoRotate) {
               EXIF.getData(img, function() {
                 const orientation = EXIF.getTag(this, 'Orientation')
                 that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
