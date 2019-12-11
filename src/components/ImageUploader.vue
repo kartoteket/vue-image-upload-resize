@@ -199,6 +199,7 @@ export default {
       imagePreview: null,
       currentFile: {},
       dimensions: {},
+      exifData: {},
     }
   },
 
@@ -263,15 +264,15 @@ export default {
           img.onload = function() {
             that.log('img.onload() is triggered', 2)
 
-            if (that.autoRotate) {
+            // this extracts exifdata if available. Returns an empty object if not
               EXIF.getData(img, function() {
-                const orientation = EXIF.getTag(this, 'Orientation')
-                that.log('ImageUploader: image orientation from EXIF tag = ' + orientation)
-                that.scaleImage(img, orientation)
+              that.exifData = this.exifdata
+              if (Object.keys(that.exifData).length === 0) {
+                that.log('ImageUploader: exif data found and extracted', 2)
+              }
               })
-            } else {
-              that.scaleImage(img)
-            }
+
+            that.scaleImage(img, that.exifData.Orientation)
           }
         }
         reader.readAsDataURL(file)
@@ -293,7 +294,8 @@ export default {
       ctx.save()
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
-      if (orientation > 1) {
+      if (this.autoRotate && orientation > 1) {
+        this.log('ImageUploader: rotating image as per EXIF orientation tag = ' + orientation)
         const width = canvas.width
         const styleWidth = canvas.style.width
         const height = canvas.height
