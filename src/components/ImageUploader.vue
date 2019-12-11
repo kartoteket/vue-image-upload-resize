@@ -265,12 +265,12 @@ export default {
             that.log('img.onload() is triggered', 2)
 
             // this extracts exifdata if available. Returns an empty object if not
-              EXIF.getData(img, function() {
+            EXIF.getData(img, function() {
               that.exifData = this.exifdata
               if (Object.keys(that.exifData).length === 0) {
                 that.log('ImageUploader: exif data found and extracted', 2)
               }
-              })
+            })
 
             that.scaleImage(img, that.exifData.Orientation)
           }
@@ -540,16 +540,8 @@ export default {
         const data = {
           dataUrl: imageData,
           info,
+          exif: Object.keys(this.exifData).length > 0 ? this.exifData : null,
         }
-
-        // @todo: cache and reuse exifdata if autoRotate is used
-        EXIF.getData(this.currentFile, function() {
-          if (Object.keys(this.exifdata).length > 0) {
-            data.exif = this.exifdata
-            return data
-          }
-        })
-
         return data
       }
 
