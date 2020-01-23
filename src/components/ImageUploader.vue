@@ -1,6 +1,7 @@
 <template>
   <div>
-    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="400" /> <input :id="id" :class="className" type="file" @change="uploadFile" :accept="accept" :capture="capture" />
+    <img v-show="imagePreview" v-for="(preview, index) in imagePreview" :key="index" :src="preview" class="img-preview" width="400" />
+    <input :id="id" :class="className" type="file" @change="uploadFile" :accept="accept" :capture="capture" :multiple="multiple" />
     <slot name="upload-label"></slot>
   </div>
 </template>
@@ -192,11 +193,21 @@ export default {
       type: Number,
       default: 0,
     },
+
+    /**
+     * Sets an optional multiple attribute, to allow/disallow multiple uploads
+     * @default false
+     * @type {Boolean}
+     */
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
-      imagePreview: null,
+      imagePreview: [],
       currentFile: {},
       dimensions: {},
       exifData: {},
@@ -209,11 +220,14 @@ export default {
      * @param  {object} event
      */
     uploadFile(e) {
-      const file = e.target.files && e.target.files.length ? e.target.files[0] : null
-      if (file) {
-        this.emitLoad()
-        this.handleFile(file)
-      }
+      const files = [...e.target.files]
+
+      files.forEach(file => {
+        if (file) {
+          this.emitLoad()
+          this.handleFile(file)
+        }
+      })
     },
 
     /**
@@ -393,7 +407,7 @@ export default {
 
       // Display preview of the new image
       if (this.preview) {
-        this.imagePreview = imageData
+        this.imagePreview.push(imageData)
       }
 
       // Return the new image

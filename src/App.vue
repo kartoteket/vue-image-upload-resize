@@ -8,6 +8,7 @@
       doNotResize="gif"
       :autoRotate="true"
       outputFormat="verbose"
+      :multiple="true"
       @input="setImage"
     >
       <label for="fileInput" slot="upload-label">
