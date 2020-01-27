@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "^3.14.0",
-    "eslint-plugin-prettier": "^3.1.0",
     "vue": "^2.5.17"
   },
   "devDependencies": {
@@ -27,6 +26,7 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.8.0",
     "eslint": "^5.8.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "vue-template-compiler": "^2.5.17"
   },
@@ -50,7 +50,6 @@
   "browser": {
     "./sfc": "src/ImageUploader.vue"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kartoteket/vue-image-upload-resize.git"
