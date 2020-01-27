@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres (more or less) to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ___
+## [2.3]  - 2020-01-27
+### Fixed
+- Update entry points so that the plugin can be used as SFC with local registration ref [issue #32](https://github.com/kartoteket/vue-image-upload-resize/issues/32).
+### Changed
+- Slimmed down npm tarball to essentiel files only.
+
+
 ## [2.2]  - 2019-12-11
 ### Changed
 - Changed verbose output object to allways return an exif property (which is `null` if no exifdata)
