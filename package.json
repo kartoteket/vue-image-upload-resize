@@ -33,7 +33,8 @@
   "browser": "dist/vue-image-upload-resize.umd.min.js",
   "files": [
     "dist",
-    "src"
+    "src/components/ImageUploader.vue",
+    "src/utils/exif.js"
   ],
   "keywords": [
     "vue",
