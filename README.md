@@ -22,11 +22,26 @@ npm install --save vue-image-upload-resize
 ```
 
 ### Usage
+
+#### Global Registration
 In script entry point
 ```js
 import ImageUploader from 'vue-image-upload-resize'
 Vue.use(ImageUploader);
 ```
+
+#### Local Registration
+In component
+```js
+import ImageUploader from 'vue-image-upload-resize'
+export default {
+  components: {
+    ImageUploader
+  },
+  // ...
+}
+```
+
 
 #### Using with Nuxt.js
 
