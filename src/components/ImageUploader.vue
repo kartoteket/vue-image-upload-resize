@@ -538,6 +538,7 @@ export default {
 
       if (this.outputFormat === 'verbose') {
         const data = {
+          file: this.currentFile,
           dataUrl: imageData,
           info,
           exif: Object.keys(this.exifData).length > 0 ? this.exifData : null,
