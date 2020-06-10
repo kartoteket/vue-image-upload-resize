@@ -30,7 +30,7 @@ describe('ImageUploader', () => {
   it('sets the correct default data', () => {
     expect(typeof ImageUploader.data).toBe('function')
     const defaultData = ImageUploader.data()
-    expect(defaultData.imagePreview).toBe(null)
+    expect(defaultData.imagePreview).toEqual([])
   })
 
   describe('Events', () => {
