@@ -3937,6 +3937,11 @@ execa@^3.3.0:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
+exifr@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/exifr/-/exifr-5.0.3.tgz#700e6a0543e20f4ea88a286250232cbc2d98b6cb"
+  integrity sha512-vC90Lop0cBj5k9V18qHV6lzf/O1lWOlcHXn9r0Ueh4bTZnr+HV4QKFXPSR1v87sq6BBTFAgXrF/ZfeWBAwBcFQ==
+
 exit@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/exit/-/exit-0.1.2.tgz#0632638f8d877cc82107d30a0fff1a17cba1cd0c"

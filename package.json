@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "blueimp-canvas-to-blob": "^3.14.0",
+    "exifr": "^5.0.3",
     "vue": "^2.5.17"
   },
   "devDependencies": {

@@ -39,7 +39,7 @@
  * SOFTWARE.
  **/
 
-import EXIF from '../utils/exif.js'
+import exifr from 'exifr'
 import dataURLtoBlob from 'blueimp-canvas-to-blob'
 
 export default {
@@ -265,14 +265,14 @@ export default {
             that.log('img.onload() is triggered', 2)
 
             // this extracts exifdata if available. Returns an empty object if not
-            EXIF.getData(img, function() {
-              that.exifData = this.exifdata
-              if (Object.keys(that.exifData).length === 0) {
+            exifr.parse(img, { translateValues: false }).then(exifData => {
+              that.exifData = exifData
+              if (Object.keys(that.exifData).length !== 0) {
                 that.log('ImageUploader: exif data found and extracted', 2)
               }
-            })
 
-            that.scaleImage(img, that.exifData.Orientation)
+              that.scaleImage(img, that.exifData.Orientation)
+            })
           }
         }
         reader.readAsDataURL(file)
