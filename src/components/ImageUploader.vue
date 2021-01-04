@@ -192,6 +192,16 @@ export default {
       type: Number,
       default: 0,
     },
+
+    /**
+     * Image preview file data
+     * @default null
+     * @type {String}
+     */
+    previewFileData: {
+      type: String,
+      default: null,
+    },
   },
 
   data() {
@@ -569,6 +579,13 @@ export default {
 
   created() {
     this.log('Initialised ImageUploader')
+    this.imagePreview = this.previewFileData
+  },
+
+  watch: {
+    previewFileData: function() {
+      this.imagePreview = this.previewFileData
+    },
   },
 }
 </script>
