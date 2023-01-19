@@ -1,7 +1,21 @@
 <template>
   <div>
-    <img v-show="imagePreview" :src="imagePreview" class="img-preview" width="400" /> <input :id="id" :class="className" type="file" @change="uploadFile" :accept="accept" :capture="capture" />
-    <slot name="upload-label"></slot>
+    <img
+      v-show="imagePreview"
+      :src="imagePreview"
+      class="img-preview"
+      width="400"
+    />
+    <input
+      :id="id"
+      :class="className"
+      type="file"
+      @change="uploadFile"
+      :accept="accept"
+      :capture="capture"
+      style="display: none"
+    />
+    <slot></slot>
   </div>
 </template>
 
@@ -39,11 +53,11 @@
  * SOFTWARE.
  **/
 
-import EXIF from '../utils/exif.js'
-import dataURLtoBlob from 'blueimp-canvas-to-blob'
+import EXIF from "../utils/exif.js";
+import dataURLtoBlob from "blueimp-canvas-to-blob";
 
 export default {
-  name: 'image-uploader',
+  name: "image-uploader",
 
   props: {
     /**
@@ -54,7 +68,7 @@ export default {
      */
     id: {
       type: String,
-      default: 'fileInput',
+      default: "fileInput",
     },
 
     /**
@@ -136,7 +150,7 @@ export default {
      */
     outputFormat: {
       type: String,
-      default: 'string',
+      default: "string",
     },
 
     /**
@@ -146,7 +160,7 @@ export default {
      */
     className: {
       type: [String, Array],
-      default: 'fileinput',
+      default: "fileinput",
     },
 
     /**
@@ -167,7 +181,7 @@ export default {
      */
     accept: {
       type: String,
-      default: 'image/*',
+      default: "image/*",
     },
 
     /**
@@ -200,7 +214,7 @@ export default {
       currentFile: {},
       dimensions: {},
       exifData: {},
-    }
+    };
   },
 
   methods: {
@@ -209,10 +223,11 @@ export default {
      * @param  {object} event
      */
     uploadFile(e) {
-      const file = e.target.files && e.target.files.length ? e.target.files[0] : null
+      const file =
+        e.target.files && e.target.files.length ? e.target.files[0] : null;
       if (file) {
-        this.emitLoad()
-        this.handleFile(file)
+        this.emitLoad();
+        this.handleFile(file);
       }
     },
 
@@ -221,17 +236,17 @@ export default {
      * @param  {mixed} output - The resized image. type can be simple dataUrl string, verbose object or Blob instance
      */
     emitEvent(output) {
-      this.log('emitEvent() is called with output:', 2, output)
-      this.$emit('input', output)
-      this.$emit('change', output)
+      this.log("emitEvent() is called with output:", 2, output);
+      this.$emit("input", output);
+      this.$emit("change", output);
     },
 
     emitLoad() {
-      this.$emit('onUpload')
+      this.$emit("onUpload");
     },
 
     emitComplete() {
-      this.$emit('onComplete')
+      this.$emit("onComplete");
     },
 
     /**
@@ -240,42 +255,49 @@ export default {
      * @return {}         nada (yet)
      */
     handleFile(file) {
-      this.log('handleFile() is called with file:', 2, file)
-      this.currentFile = file
+      this.log("handleFile() is called with file:", 2, file);
+      this.currentFile = file;
 
-      const mimetype = file.type.split('/') // NB: Not supprted by Safari on iOS !??! @todo: TEST!
-      const isImage = mimetype[0] === 'image'
-      const doNotResize = typeof this.doNotResize === 'string' ? [this.doNotResize] : this.doNotResize // cast to array
+      const mimetype = file.type.split("/"); // NB: Not supprted by Safari on iOS !??! @todo: TEST!
+      const isImage = mimetype[0] === "image";
+      const doNotResize =
+        typeof this.doNotResize === "string"
+          ? [this.doNotResize]
+          : this.doNotResize; // cast to array
 
       // Don't resize if not image or doNotResize is set
-      if (!isImage || doNotResize.includes('*') || doNotResize.includes(mimetype[1])) {
-        this.log('No Resize, return file directly')
-        this.emitEvent(file) // does NOT respect the output format prop
-        this.emitComplete()
+      if (
+        !isImage ||
+        doNotResize.includes("*") ||
+        doNotResize.includes(mimetype[1])
+      ) {
+        this.log("No Resize, return file directly");
+        this.emitEvent(file); // does NOT respect the output format prop
+        this.emitComplete();
       } else {
-        const that = this
-        const img = document.createElement('img')
-        const reader = new window.FileReader()
+        const that = this;
+        const img = document.createElement("img");
+        const reader = new window.FileReader();
 
-        reader.onload = function(e) {
-          that.log('reader.onload() is triggered', 2)
+        reader.onload = function (e) {
+          that.log("reader.onload() is triggered", 2);
 
-          img.src = e.target.result
-          img.onload = function() {
-            that.log('img.onload() is triggered', 2)
+          img.src = e.target.result;
+          img.onload = function () {
+            that.log("img.onload() is triggered", 2);
 
             // this extracts exifdata if available. Returns an empty object if not
-            EXIF.getData(img, function() {
-              that.exifData = this.exifdata
+            EXIF.getData(img, function () {
+              that.exifData = this.exifdata;
               if (Object.keys(that.exifData).length === 0) {
-                that.log('ImageUploader: exif data found and extracted', 2)
+                that.log("ImageUploader: exif data found and extracted", 2);
               }
-            })
+            });
 
-            that.scaleImage(img, that.exifData.Orientation)
-          }
-        }
-        reader.readAsDataURL(file)
+            that.scaleImage(img, that.exifData.Orientation);
+          };
+        };
+        reader.readAsDataURL(file);
       }
     },
 
@@ -285,122 +307,139 @@ export default {
      * @param  {int} [orientation = 1] - Exif-extracted orientation code
      */
     scaleImage(img, orientation = 1) {
-      this.log('scaleImage() is called', 2)
+      this.log("scaleImage() is called", 2);
 
-      let canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
-      const ctx = canvas.getContext('2d')
-      ctx.save()
+      let canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.save();
 
       // Good explanation of EXIF orientation is here http://www.daveperrett.com/articles/2012/07/28/exif-orientation-handling-is-a-ghetto/
       if (this.autoRotate && orientation > 1) {
-        this.log('ImageUploader: rotating image as per EXIF orientation tag = ' + orientation)
-        const width = canvas.width
-        const styleWidth = canvas.style.width
-        const height = canvas.height
-        const styleHeight = canvas.style.height
+        this.log(
+          "ImageUploader: rotating image as per EXIF orientation tag = " +
+            orientation
+        );
+        const width = canvas.width;
+        const styleWidth = canvas.style.width;
+        const height = canvas.height;
+        const styleHeight = canvas.style.height;
 
         if (orientation > 4) {
-          canvas.width = height
-          canvas.style.width = styleHeight
-          canvas.height = width
-          canvas.style.height = styleWidth
+          canvas.width = height;
+          canvas.style.width = styleHeight;
+          canvas.height = width;
+          canvas.style.height = styleWidth;
         }
         switch (orientation) {
           case 2:
-            ctx.translate(width, 0)
-            ctx.scale(-1, 1)
-            break
+            ctx.translate(width, 0);
+            ctx.scale(-1, 1);
+            break;
           case 3:
-            ctx.translate(width, height)
-            ctx.rotate(Math.PI)
-            break
+            ctx.translate(width, height);
+            ctx.rotate(Math.PI);
+            break;
           case 4:
-            ctx.translate(0, height)
-            ctx.scale(1, -1)
-            break
+            ctx.translate(0, height);
+            ctx.scale(1, -1);
+            break;
           case 5:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.scale(1, -1)
-            break
+            ctx.rotate(0.5 * Math.PI);
+            ctx.scale(1, -1);
+            break;
           case 6:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.translate(0, -height)
-            break
+            ctx.rotate(0.5 * Math.PI);
+            ctx.translate(0, -height);
+            break;
           case 7:
-            ctx.rotate(0.5 * Math.PI)
-            ctx.translate(width, -height)
-            ctx.scale(-1, 1)
-            break
+            ctx.rotate(0.5 * Math.PI);
+            ctx.translate(width, -height);
+            ctx.scale(-1, 1);
+            break;
           case 8:
-            ctx.rotate(-0.5 * Math.PI)
-            ctx.translate(-width, 0)
-            break
+            ctx.rotate(-0.5 * Math.PI);
+            ctx.translate(-width, 0);
+            break;
         }
       }
-      ctx.drawImage(img, 0, 0)
-      ctx.restore()
+      ctx.drawImage(img, 0, 0);
+      ctx.restore();
 
       // Let's find the max available width for scaled image
-      const ratio = canvas.width / canvas.height
-      let mWidth = Math.min(this.maxWidth, ratio * this.maxHeight)
+      const ratio = canvas.width / canvas.height;
+      let mWidth = Math.min(this.maxWidth, ratio * this.maxHeight);
 
       // suggested re-write by https://github.com/ryancramerdesign
       // https://github.com/rossturner/HTML5-ImageUploader/issues/13
-      if (this.maxSize > 0 && this.maxSize < (canvas.width * canvas.height) / 1000000) {
-        const mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000)
-        mWidth = mWidth > 0 ? Math.min(mWidth, mSize) : mSize
+      if (
+        this.maxSize > 0 &&
+        this.maxSize < (canvas.width * canvas.height) / 1000000
+      ) {
+        const mSize = Math.floor(Math.sqrt(this.maxSize * ratio) * 1000);
+        mWidth = mWidth > 0 ? Math.min(mWidth, mSize) : mSize;
       }
 
       if (this.scaleRatio) {
-        mWidth = Math.min(mWidth, Math.floor(this.scaleRatio * canvas.width))
+        mWidth = Math.min(mWidth, Math.floor(this.scaleRatio * canvas.width));
       }
 
       // store dimensions
-      this.dimensions.orgWidth = canvas.width
-      this.dimensions.orgHeight = canvas.height
-      this.dimensions.width = mWidth
-      this.dimensions.height = Math.floor(mWidth / ratio)
+      this.dimensions.orgWidth = canvas.width;
+      this.dimensions.orgHeight = canvas.height;
+      this.dimensions.width = mWidth;
+      this.dimensions.height = Math.floor(mWidth / ratio);
 
-      this.log('ImageUploader: original image size = ' + canvas.width + ' X ' + canvas.height)
-      this.log('ImageUploader: scaled image size = ' + mWidth + ' X ' + Math.floor(mWidth / ratio))
+      this.log(
+        "ImageUploader: original image size = " +
+          canvas.width +
+          " X " +
+          canvas.height
+      );
+      this.log(
+        "ImageUploader: scaled image size = " +
+          mWidth +
+          " X " +
+          Math.floor(mWidth / ratio)
+      );
 
       if (mWidth <= 0) {
-        mWidth = 1
-        console.warning('ImageUploader: image size is too small')
+        mWidth = 1;
+        console.warning("ImageUploader: image size is too small");
       }
 
       // simple resize with a 2:1 ratio
       while (canvas.width >= 2 * mWidth) {
-        canvas = this.getHalfScaleCanvas(canvas)
+        canvas = this.getHalfScaleCanvas(canvas);
       }
 
       // When factor less than 2:1 remains, finish up with alogorithm
       if (canvas.width > mWidth) {
-        canvas = this.scaleCanvasWithAlgorithm(canvas, mWidth)
+        canvas = this.scaleCanvasWithAlgorithm(canvas, mWidth);
       }
 
       // suggested re-write by https://github.com/ryancramerdesign
       // https://github.com/rossturner/HTML5-ImageUploader/issues/13
-      const quality = this.currentFile.type === 'image/jpeg' ? this.quality : 1.0
-      const imageData = canvas.toDataURL(this.currentFile.type, quality)
-      if (typeof this.onScale === 'function') {
-        this.onScale(imageData)
+      const quality =
+        this.currentFile.type === "image/jpeg" ? this.quality : 1.0;
+      const imageData = canvas.toDataURL(this.currentFile.type, quality);
+      if (typeof this.onScale === "function") {
+        this.onScale(imageData);
       }
 
-      this.log('New ImageData is ready', 2)
+      this.log("New ImageData is ready", 2);
 
       // Display preview of the new image
       if (this.preview) {
-        this.imagePreview = imageData
+        this.imagePreview = imageData;
       }
 
       // Return the new image
       // this.emitEvent(this.currentFile) // DEBUG
-      this.emitEvent(this.formatOutput(imageData))
+      this.emitEvent(this.formatOutput(imageData));
 
-      this.emitComplete()
+      this.emitComplete();
     },
 
     /**
@@ -410,20 +449,24 @@ export default {
      * @returns {HTMLElement} - canvas resized to scale
      */
     scaleCanvasWithAlgorithm(canvas, maxWidth) {
-      const scaledCanvas = document.createElement('canvas')
-      const scale = maxWidth / canvas.width
+      const scaledCanvas = document.createElement("canvas");
+      const scale = maxWidth / canvas.width;
 
-      scaledCanvas.width = canvas.width * scale
-      scaledCanvas.height = canvas.height * scale
+      scaledCanvas.width = canvas.width * scale;
+      scaledCanvas.height = canvas.height * scale;
 
-      const srcImgData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height)
-      const destImgData = scaledCanvas.getContext('2d').createImageData(scaledCanvas.width, scaledCanvas.height)
+      const srcImgData = canvas
+        .getContext("2d")
+        .getImageData(0, 0, canvas.width, canvas.height);
+      const destImgData = scaledCanvas
+        .getContext("2d")
+        .createImageData(scaledCanvas.width, scaledCanvas.height);
 
-      this.applyBilinearInterpolation(srcImgData, destImgData, scale)
+      this.applyBilinearInterpolation(srcImgData, destImgData, scale);
 
-      scaledCanvas.getContext('2d').putImageData(destImgData, 0, 0)
+      scaledCanvas.getContext("2d").putImageData(destImgData, 0, 0);
 
-      return scaledCanvas
+      return scaledCanvas;
     },
 
     /**
@@ -435,46 +478,82 @@ export default {
      */
     applyBilinearInterpolation(srcCanvasData, destCanvasData, scale) {
       function inner(f00, f10, f01, f11, x, y) {
-        const un_x = 1.0 - x
-        const un_y = 1.0 - y
-        return f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y
+        const un_x = 1.0 - x;
+        const un_y = 1.0 - y;
+        return (
+          f00 * un_x * un_y + f10 * x * un_y + f01 * un_x * y + f11 * x * y
+        );
       }
-      let i, j
-      let iyv, iy0, iy1, ixv, ix0, ix1
-      let idxD, idxS00, idxS10, idxS01, idxS11
-      let dx, dy
-      let r, g, b, a
+      let i, j;
+      let iyv, iy0, iy1, ixv, ix0, ix1;
+      let idxD, idxS00, idxS10, idxS01, idxS11;
+      let dx, dy;
+      let r, g, b, a;
       for (i = 0; i < destCanvasData.height; ++i) {
-        iyv = i / scale
-        iy0 = Math.floor(iyv)
+        iyv = i / scale;
+        iy0 = Math.floor(iyv);
         // Math.ceil can go over bounds
-        iy1 = Math.ceil(iyv) > srcCanvasData.height - 1 ? srcCanvasData.height - 1 : Math.ceil(iyv)
+        iy1 =
+          Math.ceil(iyv) > srcCanvasData.height - 1
+            ? srcCanvasData.height - 1
+            : Math.ceil(iyv);
         for (j = 0; j < destCanvasData.width; ++j) {
-          ixv = j / scale
-          ix0 = Math.floor(ixv)
+          ixv = j / scale;
+          ix0 = Math.floor(ixv);
           // Math.ceil can go over bounds
-          ix1 = Math.ceil(ixv) > srcCanvasData.width - 1 ? srcCanvasData.width - 1 : Math.ceil(ixv)
-          idxD = (j + destCanvasData.width * i) * 4
+          ix1 =
+            Math.ceil(ixv) > srcCanvasData.width - 1
+              ? srcCanvasData.width - 1
+              : Math.ceil(ixv);
+          idxD = (j + destCanvasData.width * i) * 4;
           // matrix to vector indices
-          idxS00 = (ix0 + srcCanvasData.width * iy0) * 4
-          idxS10 = (ix1 + srcCanvasData.width * iy0) * 4
-          idxS01 = (ix0 + srcCanvasData.width * iy1) * 4
-          idxS11 = (ix1 + srcCanvasData.width * iy1) * 4
+          idxS00 = (ix0 + srcCanvasData.width * iy0) * 4;
+          idxS10 = (ix1 + srcCanvasData.width * iy0) * 4;
+          idxS01 = (ix0 + srcCanvasData.width * iy1) * 4;
+          idxS11 = (ix1 + srcCanvasData.width * iy1) * 4;
           // overall coordinates to unit square
-          dx = ixv - ix0
-          dy = iyv - iy0
+          dx = ixv - ix0;
+          dy = iyv - iy0;
           // I let the r, g, b, a on purpose for debugging
-          r = inner(srcCanvasData.data[idxS00], srcCanvasData.data[idxS10], srcCanvasData.data[idxS01], srcCanvasData.data[idxS11], dx, dy)
-          destCanvasData.data[idxD] = r
+          r = inner(
+            srcCanvasData.data[idxS00],
+            srcCanvasData.data[idxS10],
+            srcCanvasData.data[idxS01],
+            srcCanvasData.data[idxS11],
+            dx,
+            dy
+          );
+          destCanvasData.data[idxD] = r;
 
-          g = inner(srcCanvasData.data[idxS00 + 1], srcCanvasData.data[idxS10 + 1], srcCanvasData.data[idxS01 + 1], srcCanvasData.data[idxS11 + 1], dx, dy)
-          destCanvasData.data[idxD + 1] = g
+          g = inner(
+            srcCanvasData.data[idxS00 + 1],
+            srcCanvasData.data[idxS10 + 1],
+            srcCanvasData.data[idxS01 + 1],
+            srcCanvasData.data[idxS11 + 1],
+            dx,
+            dy
+          );
+          destCanvasData.data[idxD + 1] = g;
 
-          b = inner(srcCanvasData.data[idxS00 + 2], srcCanvasData.data[idxS10 + 2], srcCanvasData.data[idxS01 + 2], srcCanvasData.data[idxS11 + 2], dx, dy)
-          destCanvasData.data[idxD + 2] = b
+          b = inner(
+            srcCanvasData.data[idxS00 + 2],
+            srcCanvasData.data[idxS10 + 2],
+            srcCanvasData.data[idxS01 + 2],
+            srcCanvasData.data[idxS11 + 2],
+            dx,
+            dy
+          );
+          destCanvasData.data[idxD + 2] = b;
 
-          a = inner(srcCanvasData.data[idxS00 + 3], srcCanvasData.data[idxS10 + 3], srcCanvasData.data[idxS01 + 3], srcCanvasData.data[idxS11 + 3], dx, dy)
-          destCanvasData.data[idxD + 3] = a
+          a = inner(
+            srcCanvasData.data[idxS00 + 3],
+            srcCanvasData.data[idxS10 + 3],
+            srcCanvasData.data[idxS01 + 3],
+            srcCanvasData.data[idxS11 + 3],
+            dx,
+            dy
+          );
+          destCanvasData.data[idxD + 3] = a;
         }
       }
     },
@@ -485,13 +564,15 @@ export default {
      * @returns  {HTMLElement} half of input canvas
      */
     getHalfScaleCanvas(canvas) {
-      const halfCanvas = document.createElement('canvas')
-      halfCanvas.width = canvas.width / 2
-      halfCanvas.height = canvas.height / 2
+      const halfCanvas = document.createElement("canvas");
+      halfCanvas.width = canvas.width / 2;
+      halfCanvas.height = canvas.height / 2;
 
-      halfCanvas.getContext('2d').drawImage(canvas, 0, 0, halfCanvas.width, halfCanvas.height)
+      halfCanvas
+        .getContext("2d")
+        .drawImage(canvas, 0, 0, halfCanvas.width, halfCanvas.height);
 
-      return halfCanvas
+      return halfCanvas;
     },
 
     /**
@@ -503,19 +584,21 @@ export default {
      *                                    file
      */
     formatOutput(imageData) {
-      this.log('ImageUploader: outputFormat: ' + this.outputFormat)
+      this.log("ImageUploader: outputFormat: " + this.outputFormat);
 
-      if (this.outputFormat === 'file') {
-        return this.currentFile
+      if (this.outputFormat === "file") {
+        return this.currentFile;
       }
 
-      if (this.outputFormat === 'blob') {
-        if (typeof dataURLtoBlob === 'undefined') {
-          console.warn('Missing library! blueimp-canvas-to-blob.js must be loaded to output as "blob"')
-          console.warn('Falling back to default base64 dataUrl')
-          return imageData
+      if (this.outputFormat === "blob") {
+        if (typeof dataURLtoBlob === "undefined") {
+          console.warn(
+            'Missing library! blueimp-canvas-to-blob.js must be loaded to output as "blob"'
+          );
+          console.warn("Falling back to default base64 dataUrl");
+          return imageData;
         }
-        return dataURLtoBlob(imageData)
+        return dataURLtoBlob(imageData);
       }
 
       const info = {
@@ -526,27 +609,29 @@ export default {
         newHeight: this.dimensions.height,
         orgWidth: this.dimensions.orgWidth,
         orgHeight: this.dimensions.orgHeight,
-        aspectRatio: Math.round((this.dimensions.width / this.dimensions.height) * 100) / 100, //as Float
+        aspectRatio:
+          Math.round((this.dimensions.width / this.dimensions.height) * 100) /
+          100, //as Float
         modifiedTimestamp: this.currentFile.lastModified,
         modifiedDate: this.currentFile.lastModifiedDate,
-      }
+      };
 
       // return just info
-      if (this.outputFormat === 'info') {
-        return info
+      if (this.outputFormat === "info") {
+        return info;
       }
 
-      if (this.outputFormat === 'verbose') {
+      if (this.outputFormat === "verbose") {
         const data = {
           dataUrl: imageData,
           info,
           exif: Object.keys(this.exifData).length > 0 ? this.exifData : null,
-        }
-        return data
+        };
+        return data;
       }
 
       // simple base64 dataUrl string by default
-      return imageData
+      return imageData;
     },
 
     /**
@@ -558,17 +643,17 @@ export default {
     log(msg, level = 1, details = null) {
       if (this.debug >= level) {
         // eslint-disable-next-line
-        console.info(msg)
+        console.info(msg);
         if (details) {
           // eslint-disable-next-line
-          console.info(details)
+          console.info(details);
         }
       }
     },
   },
 
   created() {
-    this.log('Initialised ImageUploader')
+    this.log("Initialised ImageUploader");
   },
-}
+};
 </script>
